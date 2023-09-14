@@ -119,26 +119,21 @@ public class AuthenticationController {
                     + credential;
             FBUserInfo userContentObj = restTemplate.getForObject(meUrl, FBUserInfo.class);
 
-            Optional<User> optionalUser = userRepository.findFirstByEmail(userContentObj.getEmail());
+            List<User> listUser = userRepository.findAllByEmail(userContentObj.getEmail());
 
-            if (optionalUser.isPresent()) {
-                if (optionalUser.get().getSource() != RegistrationSource.FACEBOOK) {
-                    User user = facebookUserInfoToUser(userContentObj);
-                    userRepository.save(user);
-                }
-            } else {
+            User userExist = listUser.stream()
+                .filter(u -> u.getSource().equals(RegistrationSource.FACEBOOK))
+                .findFirst()
+                .orElse(null);
+
+            if (userExist==null) {
+
                 User user = facebookUserInfoToUser(userContentObj);
                 userRepository.save(user);
-            }
-
-            if (userContentObj != null) {
-
-                return ResponseEntity.ok(userContentObj);
-
+                return ResponseEntity.ok(user);
+ 
             } else {
-
-                return ResponseEntity.badRequest().build();
-
+                return ResponseEntity.ok(userExist);
             }
 
         } catch (Exception e) {

@@ -3,6 +3,7 @@ package com.andretavares.testesecurity.dto;
 import java.util.Date;
 
 import com.andretavares.testesecurity.enums.UserRole;
+import com.andretavares.testesecurity.source.RegistrationSource;
 
 import lombok.Data;
 
@@ -21,5 +22,7 @@ public class UserDto {
     private String gender;
 
     private UserRole role;
+
+    private RegistrationSource source;
 
 }
