@@ -19,20 +19,20 @@ import com.andretavares.testesecurity.source.RegistrationSource;
 import jakarta.annotation.PostConstruct;
 
 @Service
-public class AdminServiceImpl implements AdminService{
+public class AdminServiceImpl implements AdminService {
 
     private final UserRepository userRepository;
 
-    public AdminServiceImpl(UserRepository userRepository){
+    public AdminServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-    
+
     @PostConstruct
-    public void createAdminAccount(){
+    public void createAdminAccount() {
         User adminAccount = userRepository.findByRole(UserRole.ADMIN);
-        if(adminAccount==null){
+        if (adminAccount == null) {
             User admin = new User();
-    
+
             admin.setEmail("admin@test.com");
             admin.setPassword(new BCryptPasswordEncoder().encode("admin"));
             admin.setRole(UserRole.ADMIN);
@@ -43,7 +43,7 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public UserDto postUser(UserDto userDto) {
         Optional<User> optionalUser = userRepository.findFirstByEmail(userDto.getEmail());
-        if(optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             User user = new User();
             BeanUtils.copyProperties(userDto, user);
             user.setPassword(new BCryptPasswordEncoder().encode(userDto.getPassword()));
@@ -59,8 +59,13 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public UserDto postUserGoogle(UserGoogleProviderDto userDto) {
-        Optional<User> optionalUser = userRepository.findFirstByEmail(userDto.getEmail());
-        if(optionalUser.isEmpty()){
+        List<User> optionalUser = userRepository.findAllByEmail(userDto.getEmail());
+
+        Optional<User> userComSourceGoogle = optionalUser.stream()
+            .filter(user -> user.getSource() == RegistrationSource.GOOGLE)
+            .findFirst();
+
+        if (!userComSourceGoogle.isPresent()) {
             User user = new User();
             BeanUtils.copyProperties(userDto, user);
             user.setRole(UserRole.USER);
@@ -71,25 +76,16 @@ public class AdminServiceImpl implements AdminService{
             createdUserDto.setEmail(createdUser.getEmail());
             createdUserDto.setRole(UserRole.USER);
             return createdUserDto;
-        }else{
-            if(optionalUser.get().getSource()!=RegistrationSource.GOOGLE){
-                User user = new User();
-                BeanUtils.copyProperties(userDto, user);
-                user.setRole(UserRole.USER);
-                user.setSource(RegistrationSource.GOOGLE);
-                User createdUser = userRepository.save(user);
-                UserDto createdUserDto = new UserDto();
-                createdUserDto.setId(createdUser.getId());
-                createdUserDto.setEmail(createdUser.getEmail());
-                createdUserDto.setRole(UserRole.USER);
-                return createdUserDto;
-            }
+        } else {
+
+            UserDto createdUserDto = new UserDto();
+            createdUserDto.setId(userComSourceGoogle.get().getId());
+            createdUserDto.setEmail(userComSourceGoogle.get().getEmail());
+            createdUserDto.setRole(UserRole.USER);
+            return createdUserDto;
+
         }
-        UserDto createdUserDto = new UserDto();
-        createdUserDto.setId(optionalUser.get().getId());
-        createdUserDto.setEmail(optionalUser.get().getEmail());
-        createdUserDto.setRole(UserRole.USER);
-        return createdUserDto;
+
     }
 
     @Override
@@ -115,9 +111,9 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public UserDto updateUser(Long userId, UserDto userDto) {
         Optional<User> optionalUser = userRepository.findById(userId);
-        if(optionalUser.isPresent()){
+        if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            BeanUtils.copyProperties(userDto, user,"id","password");
+            BeanUtils.copyProperties(userDto, user, "id", "password");
             User updatedUser = userRepository.save(user);
             UserDto updatedUserDto = new UserDto();
             updatedUserDto.setId(updatedUser.getId());
