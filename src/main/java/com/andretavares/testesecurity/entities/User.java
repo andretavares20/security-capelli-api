@@ -1,5 +1,6 @@
 package com.andretavares.testesecurity.entities;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import com.andretavares.testesecurity.dto.UserDto;
@@ -28,7 +29,7 @@ public class User {
     private String email;
     private String password;
 
-    private Date dob;
+    private LocalDate dataNascimento;
 
     private String address;
 
@@ -48,7 +49,7 @@ public class User {
         userDto.setName(name);
         userDto.setEmail(email);
         userDto.setAddress(address);
-        userDto.setDob(dob);
+        userDto.setDataNascimento(dataNascimento);
         userDto.setGender(gender);
         userDto.setSource(source);
         return userDto;

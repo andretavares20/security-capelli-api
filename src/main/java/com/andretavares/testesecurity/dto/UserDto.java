@@ -1,5 +1,6 @@
 package com.andretavares.testesecurity.dto;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import com.andretavares.testesecurity.enums.UserRole;
@@ -15,7 +16,7 @@ public class UserDto {
     private String email;
     private String password;
 
-    private Date dob;
+    private LocalDate dataNascimento;
 
     private String address;
 

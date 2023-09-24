@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.andretavares.testesecurity.dto.PagamentoRequest;
-import com.andretavares.testesecurity.services.impl.PagamentoService;
+import com.andretavares.testesecurity.dto.PaymentDTO;
+import com.andretavares.testesecurity.services.PagamentoService;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.net.MPResultsResourcesPage;
@@ -32,11 +33,11 @@ public class PagamentoController {
     }
 
     @GetMapping(path = "/search-payments")
-    public ResponseEntity<MPResultsResourcesPage<Payment>> searchPayments() throws MPException, MPApiException {
+    public ResponseEntity<PaymentDTO>searchPayments() throws MPException, MPApiException {
 
-        MPResultsResourcesPage<Payment> listPayments =  pagamentoService.searchPayments();
+        ResponseEntity<PaymentDTO> listPayments =  pagamentoService.searchPayments();
 
-        return ResponseEntity.ok().body(listPayments);
+        return listPayments;
 
     }
 }

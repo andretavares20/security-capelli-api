@@ -1,24 +1,29 @@
-package com.andretavares.testesecurity.services;
+package com.andretavares.testesecurity.services.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.andretavares.testesecurity.dto.PagamentoRequest;
-import com.andretavares.testesecurity.services.impl.PagamentoService;
+import com.andretavares.testesecurity.dto.PaymentDTO;
+import com.andretavares.testesecurity.services.PagamentoService;
 import com.mercadopago.client.common.IdentificationRequest;
 import com.mercadopago.client.payment.PaymentClient;
 import com.mercadopago.client.payment.PaymentCreateRequest;
 import com.mercadopago.client.payment.PaymentPayerRequest;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
-import com.mercadopago.net.MPResultsResourcesPage;
-import com.mercadopago.net.MPSearchRequest;
 import com.mercadopago.resources.payment.Payment;
 
 @Service
 public class PagamentoServiceImpl implements PagamentoService {
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Override
     public Payment createPayment(PagamentoRequest request) throws MPException, MPApiException {
@@ -57,19 +62,20 @@ public class PagamentoServiceImpl implements PagamentoService {
     }
 
     @Override
-    public MPResultsResourcesPage<Payment> searchPayments() throws MPException, MPApiException {
+    public ResponseEntity<PaymentDTO> searchPayments() throws MPException, MPApiException {
 
-        PaymentClient client = new PaymentClient();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + "APP_USR-4044482508044042-091415-4c050743d2e1388029b384704b4ec264-170994291");
+        HttpEntity<String> httpEntity = new HttpEntity<>(null, headers);
 
-        Map<String, Object> filters = new HashMap<>();
-        filters.put("sort", "date_created");
-        filters.put("criteria", "desc");
-        filters.put("external_reference", "ID_REF");
+        ResponseEntity<PaymentDTO> responseEntity = restTemplate.exchange(
+            "https://api.mercadopago.com/v1/payments/search?sort=date_created&criteria=desc",
+            HttpMethod.GET,
+            httpEntity,
+            PaymentDTO.class
+        );
 
-        MPSearchRequest searchRequest = MPSearchRequest.builder().offset(0).limit(0).filters(filters).build();
-
-        MPResultsResourcesPage<Payment> listPayments = client.search(searchRequest);
-        return listPayments;
+        return responseEntity;
     }
 
 }
