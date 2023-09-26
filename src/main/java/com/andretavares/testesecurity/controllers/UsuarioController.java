@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import com.andretavares.testesecurity.dto.SingleUserDto;
 import com.andretavares.testesecurity.entities.User;
 import com.andretavares.testesecurity.repositories.UserRepository;
@@ -18,7 +19,7 @@ import com.andretavares.testesecurity.services.UserService;
 
 @RestController
 @RequestMapping("/usuario")
-public class UsuarioController {
+public class UsuarioController{
 
     @Autowired
     private UserService userService;
