@@ -13,7 +13,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class PedidoModel {
+public class Pedido {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +29,7 @@ public class PedidoModel {
 
     @ManyToOne
     @JoinColumn(name = "pagamento_id")
-    private PagamentoModel pagamento;
+    private Pagamento pagamento;
 
     private LocalDateTime dataPedido;
 

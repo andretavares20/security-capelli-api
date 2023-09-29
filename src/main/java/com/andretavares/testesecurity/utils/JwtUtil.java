@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +18,13 @@ import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
+
+    @Value("${jwt.expirationMs}")
+    private int jwtExpirationMs;
+    @Value("${jwt.secret}")
+    private String jwtSecret;
     
-    public static final String SECRET = "csezCexuHSZGNw/lQsvdASWH5nUTprjM0CbZiwImlcOlGBnUvJt3ak5LQ6N456nhHZraln5BXdYDEdI4HK7yteWCPDHiTQUO6ao7xRfFtK1JlK5zD3Qb4axTArpZAey+tYNkg616GexAjymQOm2t4PBpog+OdMLo2J7yBxTB0D+n4XXUTgR9atecSmbFG8VBUOQefCm5e4qePZ/Axy8UL8YQU9Bc268vatFjR9z+XbCQae2SoS2+wCcvjz/Fo56TSfk1P0X26Ox+KdV2hI3BmfxUuZ5EX1SdK2vPizRAVKH2sRsV4RfrVs3/leS3SiOngmYDDu7OMxJIMynkXyodDdOUsRnyZRsPCrJ2r/HOyMw=";
+    // public static final String SECRET = "csezCexuHSZGNw/lQsvdASWH5nUTprjM0CbZiwImlcOlGBnUvJt3ak5LQ6N456nhHZraln5BXdYDEdI4HK7yteWCPDHiTQUO6ao7xRfFtK1JlK5zD3Qb4axTArpZAey+tYNkg616GexAjymQOm2t4PBpog+OdMLo2J7yBxTB0D+n4XXUTgR9atecSmbFG8VBUOQefCm5e4qePZ/Axy8UL8YQU9Bc268vatFjR9z+XbCQae2SoS2+wCcvjz/Fo56TSfk1P0X26Ox+KdV2hI3BmfxUuZ5EX1SdK2vPizRAVKH2sRsV4RfrVs3/leS3SiOngmYDDu7OMxJIMynkXyodDdOUsRnyZRsPCrJ2r/HOyMw=";
 
     public String extractUsername(String token){return extractClaim(token,Claims::getSubject);}
 
@@ -51,12 +57,12 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date (System.currentTimeMillis() +1000 *60*30))
+                .setExpiration(new Date((new Date()).getTime()+jwtExpirationMs))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
 
     private Key getSignKey(){
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

@@ -1,6 +1,5 @@
 package com.andretavares.testesecurity.dto;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 import com.andretavares.testesecurity.enums.UserRole;

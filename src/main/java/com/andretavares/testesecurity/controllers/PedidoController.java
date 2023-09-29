@@ -10,21 +10,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.andretavares.testesecurity.entities.PedidoModel;
+import com.andretavares.testesecurity.entities.Pedido;
 
 @RestController
 @RequestMapping("/pedido")
 public class PedidoController {
     
     @PostMapping
-    public PedidoModel postPedido(@RequestBody PedidoModel pedido){
+    public Pedido postPedido(@RequestBody Pedido pedido){
 
         return null;
 
     }
 
     @GetMapping
-    public PedidoModel getPedido(@RequestParam("pedidoId") Long pedidoId){
+    public Pedido getPedido(@RequestParam("pedidoId") Long pedidoId){
 
         return null;
 
@@ -39,7 +39,7 @@ public class PedidoController {
     }
 
     @GetMapping("/buscar-pedidos")
-    public List<PedidoModel> buscaListPedido(@RequestParam("usuarioId") Long usuarioId){
+    public List<Pedido> buscaListPedido(@RequestParam("usuarioId") Long usuarioId){
 
         return null;
 
