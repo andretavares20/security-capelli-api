@@ -23,8 +23,8 @@ public class PagamentoModel {
 
     private LocalDate dataPagamento;
 
-    @OneToOne(mappedBy = "pagamento")
-    private CarrinhoModel carrinho;
+    
+    private Carrinho carrinho;
 
     @ManyToOne
     @JoinColumn(name = "metodo_pagamento_id")

@@ -1,6 +1,7 @@
 package com.andretavares.testesecurity.entities;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
+import java.util.Date;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,29 +9,26 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.Data;
 
 @Entity
 @Data
-public class PedidoModel {
+public class OrdemLog implements Serializable{
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @JoinColumn
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private User usuario;
-
-    @OneToOne
-    @JoinColumn(name = "carrinho_id")
-    private Carrinho carrinho;
-
+    private Ordem ordem;
+    @JoinColumn
     @ManyToOne
-    @JoinColumn(name = "pagamento_id")
-    private PagamentoModel pagamento;
-
-    private LocalDateTime dataPedido;
+    private User user;
+    private Integer logType;
+    private String logMessage;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date time;
 
 }

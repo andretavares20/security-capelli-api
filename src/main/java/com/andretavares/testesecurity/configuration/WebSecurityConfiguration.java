@@ -1,36 +1,29 @@
 package com.andretavares.testesecurity.configuration;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.User.UserBuilder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.savedrequest.NullRequestCache;
-import org.springframework.security.web.savedrequest.RequestCache;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.andretavares.testesecurity.filters.JwtRequestFilter;
+
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 
 @Configuration
 @EnableMethodSecurity
@@ -38,11 +31,6 @@ import com.andretavares.testesecurity.filters.JwtRequestFilter;
 public class WebSecurityConfiguration {
 
     private final JwtRequestFilter jwtRequestFilter;
-
-    @Value("${frontend.url}")
-    private String frontendUrl;
-
-    RequestCache nullRequestCache = new NullRequestCache();
 
     public WebSecurityConfiguration(JwtRequestFilter jwtRequestFilter) {
         this.jwtRequestFilter = jwtRequestFilter;
@@ -64,18 +52,17 @@ public class WebSecurityConfiguration {
         // .build();
 
         return httpSecurity
-                .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(auth -> {
-                    auth
-                            .requestMatchers("/authenticate", "/api/**", "/LoginWithFacebook", "/pagamento/**")
-                            .permitAll()
-                            .requestMatchers(HttpMethod.GET, "/car").authenticated();
-                })
-                .httpBasic(Customizer.withDefaults())
+                .csrf(csrf -> csrf
+                        .disable())
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/authenticate", "/sign-up", "/error/**")
+                        .permitAll())
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/api/**")
+                        .authenticated())
+                .sessionManagement(management -> management
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-                .requestCache((cache) -> cache
-                        .requestCache(nullRequestCache))
                 .build();
 
     }
@@ -84,19 +71,7 @@ public class WebSecurityConfiguration {
     @Profile("dev")
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-                .requestMatchers("/**");
-    }
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(frontendUrl));
-        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*");
-        configuration.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", configuration);
-        return urlBasedCorsConfigurationSource;
+                .requestMatchers("/swagger-ui/**", "/v3/**");
     }
 
     @Bean
@@ -113,22 +88,22 @@ public class WebSecurityConfiguration {
 
     }
 
-    // @Primary
-    // @Bean
-    // public UserDetailsService users() {
-    //     // The builder will ensure the passwords are encoded before saving in memory
-    //     UserBuilder users = User.withDefaultPasswordEncoder();
-    //     UserDetails user = users
-    //             .username("user")
-    //             .password("password")
-    //             .roles("USER")
-    //             .build();
-    //     UserDetails admin = users
-    //             .username("admin")
-    //             .password("admin")
-    //             .roles("USER", "ADMIN")
-    //             .build();
-    //     return new InMemoryUserDetailsManager(user, admin);
-    // }
+    @Bean
+    public OpenAPI openAPI() {
+        return new OpenAPI().addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
+                .components(new Components().addSecuritySchemes("Bearer Authentication",
+                        createAPIKeyScheme()))
+                .info(new Info().title("Api Capelli Megahair")
+                        .description("Ambiente de testes das API's do Site Capelli Megahair")
+                        .version("1.0").contact(new Contact().name("André Tavares")
+                                .email("www.capellimegahair.com.br").url("andretavares16@gmail.com"))
+                        .license(new License().name("License of API")
+                                .url("API license URL")));
+    }
 
+    private SecurityScheme createAPIKeyScheme() {
+        return new SecurityScheme().type(SecurityScheme.Type.HTTP)
+                .bearerFormat("JWT")
+                .scheme("bearer");
+    }
 }

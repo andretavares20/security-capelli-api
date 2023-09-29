@@ -16,36 +16,30 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 @Component
-public class JwtRequestFilter extends OncePerRequestFilter {
-
-    private final UserDetailsServiceImpl userDetailsServiceImpl;
+@RequiredArgsConstructor
+public class JwtRequestFilter extends OncePerRequestFilter{
+    
+    private final UserDetailsServiceImpl userDetailsService;
 
     private final JwtUtil jwtUtil;
 
-    public JwtRequestFilter(UserDetailsServiceImpl userDetailsServiceImpl, JwtUtil jwtUtil) {
-        this.userDetailsServiceImpl = userDetailsServiceImpl;
-        this.jwtUtil = jwtUtil;
-    }
-
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        // TODO Auto-generated method stub
+    protected void doFilterInternal(HttpServletRequest request,HttpServletResponse response,FilterChain filterChain) throws ServletException, IOException{
         
         String authHeader = request.getHeader("Authorization");
-        String token = null;
-        String username = null;
+        String token=null;
+        String username=null;
 
-        if(authHeader != null && authHeader.startsWith("Bearer ")){
+        if(authHeader!=null && authHeader.startsWith("Bearer ")){
             token = authHeader.substring(7);
             username = jwtUtil.extractUsername(token);
-
         }
 
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
+        if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null){
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             if(jwtUtil.validateToken(token, userDetails)){
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -57,7 +51,5 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
 
     }
-    
-
 
 }

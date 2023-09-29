@@ -1,6 +1,5 @@
 package com.andretavares.testesecurity.entities;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 import com.andretavares.testesecurity.dto.UserDto;
@@ -14,43 +13,71 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name="user_entity")
 @Data
+@Table(name = "users")
 public class User {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+
     private String email;
+
     private String password;
 
-    private LocalDate dataNascimento;
+    private String name;
 
-    private String address;
-
-    private String gender;
-
-    @Column(name="role")
-    @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Column(name="source")
+    @Lob
+    @Column(columnDefinition = "longblob")
+    private byte[] img;
+
+    private String endereço;
+
+    private String celular;
+
+    private Boolean isActive;
+
+    @Column(name = "source")
     @Enumerated(EnumType.STRING)
     private RegistrationSource source;
 
-    public UserDto getUserDto(){
+    private Date dataNascimento;
+
+    private String genero;
+
+    public User(Long id, String email, String password, String name, UserRole role, byte[] img, String endereço,
+            String celular,
+            Boolean isActive, RegistrationSource source) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.role = role;
+        this.img = img;
+        this.endereço = endereço;
+        this.celular = celular;
+        this.isActive = isActive;
+        this.source = source;
+    }
+
+    public User() {
+    }
+
+    public UserDto getUserDto() {
         UserDto userDto = new UserDto();
         userDto.setId(id);
         userDto.setName(name);
         userDto.setEmail(email);
-        userDto.setAddress(address);
+        userDto.setEndereço(endereço);
         userDto.setDataNascimento(dataNascimento);
-        userDto.setGender(gender);
+        userDto.setGenero(genero);
         userDto.setSource(source);
         return userDto;
     }

@@ -1,7 +1,6 @@
 package com.andretavares.testesecurity.controllers;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,12 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.andretavares.testesecurity.dto.AuthenticationRequest;
-import com.andretavares.testesecurity.dto.AuthenticationResponse;
 import com.andretavares.testesecurity.dto.FBUser;
 import com.andretavares.testesecurity.dto.FBUserInfo;
+import com.andretavares.testesecurity.dto.SignupRequest;
+import com.andretavares.testesecurity.dto.UserDto;
 import com.andretavares.testesecurity.entities.User;
 import com.andretavares.testesecurity.enums.UserRole;
 import com.andretavares.testesecurity.repositories.UserRepository;
+import com.andretavares.testesecurity.services.auth.AuthService;
 import com.andretavares.testesecurity.source.RegistrationSource;
 import com.andretavares.testesecurity.utils.JwtUtil;
 
@@ -49,9 +50,11 @@ public class AuthenticationController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AuthService authService;
+
     public static final String TOKEN_PREFIX = "Bearer ";
-    public static final String HEADER_STRING = "Authorization ";
-    private static List<User> userList = new ArrayList<>();
+    public static final String HEADER_STRING = "Authorization";
 
     @Value("${facebook.client-id}")
     private String FACEBOOK_CLIENT_ID;
@@ -82,12 +85,11 @@ public class AuthenticationController {
 
         final String jwtToken = jwtUtil.generateToken(userDetails.getUsername());
 
-        AuthenticationResponse authenticationResponse = new AuthenticationResponse(jwtToken);
-
         if (optionalUser.isPresent()) {
             response.getWriter().write(new JSONObject()
                     .put("userId", optionalUser.get().getId())
                     .put("role", optionalUser.get().getRole())
+                    .put("token", jwtToken)
                     .toString());
         }
 
@@ -148,6 +150,18 @@ public class AuthenticationController {
         user.setRole(UserRole.USER);
         user.setSource(RegistrationSource.FACEBOOK);
         return user;
+    }
+
+    @PostMapping("/sign-up")
+    public ResponseEntity<?> signupUser(@RequestBody SignupRequest signupRequest) {
+
+        if (authService.hasUserWithEmail(signupRequest.getEmail())) {
+            return new ResponseEntity<>("User already exists", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        UserDto userDto = authService.createUser(signupRequest);
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
+
     }
 
 }

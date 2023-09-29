@@ -12,18 +12,27 @@ import lombok.Data;
 public class UserDto {
 
     private Long id;
-    private String name;
+    
     private String email;
+
     private String password;
 
-    private LocalDate dataNascimento;
-
-    private String address;
-
-    private String gender;
+    private String name;
 
     private UserRole role;
 
+    private byte[] img;
+
+    private String endereço;
+
+    private String celular;
+
+    private Boolean isActive;
+
     private RegistrationSource source;
 
+    private Date dataNascimento;
+
+    private String genero;
+    
 }

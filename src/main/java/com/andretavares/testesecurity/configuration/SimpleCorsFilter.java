@@ -28,8 +28,6 @@ public class SimpleCorsFilter implements Filter {
                 HttpServletResponse response = (HttpServletResponse) res;
                 HttpServletRequest request = (HttpServletRequest) req;
 
-                Map<String,String> map = new HashMap<>();
-
                 String originHeader = request.getHeader("origin");
                 response.setHeader("Access-Control-Allow-Origin",originHeader);
                 response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
