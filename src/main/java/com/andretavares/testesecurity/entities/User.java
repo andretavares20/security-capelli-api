@@ -36,7 +36,7 @@ public class User {
     private UserRole role;
 
     
-    private String endereço;
+    private String endereco;
     
     private String celular;
     
@@ -62,7 +62,7 @@ public class User {
         this.password = password;
         this.name = name;
         this.role = role;
-        this.endereço = endereço;
+        this.endereco = endereço;
         this.celular = celular;
         this.isActive = isActive;
         this.source = source;
@@ -79,7 +79,7 @@ public class User {
         userDto.setId(id);
         userDto.setName(name);
         userDto.setEmail(email);
-        userDto.setEndereço(endereço);
+        userDto.setEndereco(endereco);
         userDto.setDataNascimento(dataNascimento);
         userDto.setGenero(genero);
         userDto.setSource(source);

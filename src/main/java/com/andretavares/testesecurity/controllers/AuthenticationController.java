@@ -1,15 +1,11 @@
 package com.andretavares.testesecurity.controllers;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -19,18 +15,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import com.andretavares.testesecurity.dto.AuthenticationRequest;
-import com.andretavares.testesecurity.dto.FBUser;
-import com.andretavares.testesecurity.dto.FBUserInfo;
-import com.andretavares.testesecurity.dto.SignupRequest;
-import com.andretavares.testesecurity.dto.UserDto;
 import com.andretavares.testesecurity.entities.User;
-import com.andretavares.testesecurity.enums.UserRole;
 import com.andretavares.testesecurity.repositories.UserRepository;
 import com.andretavares.testesecurity.services.auth.AuthService;
-import com.andretavares.testesecurity.source.RegistrationSource;
 import com.andretavares.testesecurity.utils.JwtUtil;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -55,12 +44,6 @@ public class AuthenticationController {
 
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
-
-    @Value("${facebook.client-id}")
-    private String FACEBOOK_CLIENT_ID;
-
-    @Value("${facebook.secret-key}")
-    private String FACEBOOK_SECRET_KEY;
 
     @PostMapping("/authenticate")
     public void createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest,
@@ -99,69 +82,16 @@ public class AuthenticationController {
         response.setHeader(HEADER_STRING, TOKEN_PREFIX + jwtToken);
     }
 
-    @PostMapping("/LoginWithFacebook")
-    public ResponseEntity<?> loginWithFacebook(@RequestBody String credential) {
-        try {
+    // @PostMapping("/sign-up")
+    // public ResponseEntity<?> signupUser(@RequestBody SignupRequest signupRequest) {
 
-            credential = credential.replaceAll("\"", "");
-            RestTemplate restTemplate = new RestTemplate();
+    //     if (authService.hasUserWithEmail(signupRequest.getEmail())) {
+    //         return new ResponseEntity<>("User already exists", HttpStatus.NOT_ACCEPTABLE);
+    //     }
 
-            // Fazer a chamada para verificar o token do Facebook
-            String debugTokenUrl = "https://graph.facebook.com/debug_token?input_token=" + credential +
-                    "&access_token=" + FACEBOOK_CLIENT_ID + "|" + FACEBOOK_SECRET_KEY;
+    //     UserDto userDto = authService.createUser(signupRequest);
+    //     return new ResponseEntity<>(userDto, HttpStatus.OK);
 
-            FBUser userOBJK = restTemplate.getForObject(debugTokenUrl, FBUser.class);
-
-            if (userOBJK != null && !userOBJK.getData().isValid()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-
-            // Fazer a chamada para obter informações do usuário do Facebook
-            String meUrl = "https://graph.facebook.com/me?fields=first_name,last_name,email,id&access_token="
-                    + credential;
-            FBUserInfo userContentObj = restTemplate.getForObject(meUrl, FBUserInfo.class);
-
-            List<User> listUser = userRepository.findAllByEmail(userContentObj.getEmail());
-
-            User userExist = listUser.stream()
-                .filter(u -> u.getSource().equals(RegistrationSource.FACEBOOK))
-                .findFirst()
-                .orElse(null);
-
-            if (userExist==null) {
-
-                User user = facebookUserInfoToUser(userContentObj);
-                userRepository.save(user);
-                return ResponseEntity.ok(user);
- 
-            } else {
-                return ResponseEntity.ok(userExist);
-            }
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    private User facebookUserInfoToUser(FBUserInfo fbUserInfo) {
-        User user = new User();
-        user.setEmail(fbUserInfo.getEmail());
-        user.setName(fbUserInfo.getFirstName() + ' ' + fbUserInfo.getLastName());
-        user.setRole(UserRole.USER);
-        user.setSource(RegistrationSource.FACEBOOK);
-        return user;
-    }
-
-    @PostMapping("/sign-up")
-    public ResponseEntity<?> signupUser(@RequestBody SignupRequest signupRequest) {
-
-        if (authService.hasUserWithEmail(signupRequest.getEmail())) {
-            return new ResponseEntity<>("User already exists", HttpStatus.NOT_ACCEPTABLE);
-        }
-
-        UserDto userDto = authService.createUser(signupRequest);
-        return new ResponseEntity<>(userDto, HttpStatus.OK);
-
-    }
+    // }
 
 }
