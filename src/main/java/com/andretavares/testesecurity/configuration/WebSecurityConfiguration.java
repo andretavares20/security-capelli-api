@@ -55,7 +55,7 @@ public class WebSecurityConfiguration {
                 .csrf(csrf -> csrf
                         .disable())
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/authenticate", "/sign-up", "/error/**","LoginWithFacebook","/pagamento/**")
+                        .requestMatchers("/api/authenticate", "/sign-up", "/error/**","LoginWithFacebook","/pagamento/**")
                         .permitAll())
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/api/**")

@@ -73,6 +73,10 @@ public class User {
     public User() {
     }
 
+    public User(Long username) {
+        this.id=username;
+    }
+
     @JsonIgnore
     public UserDto getUserDto() {
         UserDto userDto = new UserDto();

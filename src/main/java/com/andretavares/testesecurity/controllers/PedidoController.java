@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.andretavares.testesecurity.entities.Pedido;
 
 @RestController
-@RequestMapping("/pedido")
+@RequestMapping("/api/pedido")
 public class PedidoController {
     
     @PostMapping

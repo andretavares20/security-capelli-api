@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.andretavares.testesecurity.dto.AuthenticationRequest;
+import com.andretavares.testesecurity.dto.AuthenticationResponse;
 import com.andretavares.testesecurity.entities.User;
 import com.andretavares.testesecurity.repositories.UserRepository;
 import com.andretavares.testesecurity.services.auth.AuthService;
@@ -45,8 +47,8 @@ public class AuthenticationController {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
 
-    @PostMapping("/authenticate")
-    public void createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest,
+    @PostMapping("/api/authenticate")
+    public ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest,
             HttpServletResponse response)
             throws IOException, JSONException {
 
@@ -58,8 +60,7 @@ public class AuthenticationController {
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException("Incorrect Email or password");
         } catch (DisabledException disabledException) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "User is not created");
-            return;
+            throw new BadCredentialsException("User is not created");
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
@@ -68,18 +69,23 @@ public class AuthenticationController {
 
         final String jwtToken = jwtUtil.generateToken(userDetails.getUsername());
 
-        if (optionalUser.isPresent()) {
-            response.getWriter().write(new JSONObject()
-                    .put("userId", optionalUser.get().getId())
-                    .put("role", optionalUser.get().getRole())
-                    .put("token", jwtToken)
-                    .toString());
-        }
+        // if (optionalUser.isPresent()) {
+        //     response.getWriter().write(new JSONObject()
+        //             .put("userId", optionalUser.get().getId())
+        //             .put("role", optionalUser.get().getRole())
+        //             .put("token", jwtToken)
+        //             .toString());
+        // }
+
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse(jwtToken, optionalUser.get().getId(), optionalUser.get().getRole());
 
         response.setHeader("Access-Control-Expose-Headers", "Authorization");
         response.setHeader("Access-Control-Allow-Headers",
                 "Authorization,X-Pingother,Origin,X-Requested-With,Content-Type,Accept,X-Custom-header");
         response.setHeader(HEADER_STRING, TOKEN_PREFIX + jwtToken);
+
+        return ResponseEntity.ok().body(authenticationResponse);
+
     }
 
     // @PostMapping("/sign-up")

@@ -18,7 +18,7 @@ import com.mercadopago.net.MPResultsResourcesPage;
 import com.mercadopago.resources.payment.Payment;
 
 @RestController
-@RequestMapping("/pagamento")
+@RequestMapping("/api/pagamento")
 public class PagamentoController {
 
     @Autowired

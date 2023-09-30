@@ -27,8 +27,8 @@ public class Carrinho implements Serializable{
     @JoinColumn
     @ManyToOne
     private User user;
-    private Long quantidade;
-    private BigDecimal preço;
+    private Double quantidade;
+    private BigDecimal preco;
     private BigDecimal quantia;
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime dataCriacao;

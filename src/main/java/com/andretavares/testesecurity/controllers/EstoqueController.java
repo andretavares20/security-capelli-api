@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.andretavares.testesecurity.entities.Estoque;
 
 @RestController
-@RequestMapping("/estoque")
+@RequestMapping("/api/estoque")
 public class EstoqueController {
     
     @PutMapping
