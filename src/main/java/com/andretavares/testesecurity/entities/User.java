@@ -32,14 +32,14 @@ public class User {
     private String password;
 
     private String name;
-
+    
     private UserRole role;
 
-    
+    @JsonIgnore
     private String endereco;
-    
+    @JsonIgnore
     private String celular;
-    
+    @JsonIgnore
     private Boolean isActive;
     
     @Column(name = "source")

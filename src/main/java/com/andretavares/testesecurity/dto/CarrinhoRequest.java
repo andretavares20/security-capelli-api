@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class CarrinhoRequest {
     
-    private String produtoId;
+    private Long produtoId;
     private Double quantidade;
 
 }

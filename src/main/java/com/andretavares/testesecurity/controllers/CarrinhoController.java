@@ -67,34 +67,32 @@ public class CarrinhoController {
 
     }
 
-    @GetMapping("/carrinhos")
-    public List<Carrinho> findByUserId(Principal user) {
-        System.out.println(user.getName());
-        System.out.println(user.getClass());
+    @GetMapping("/carrinhos/{idUser}")
+    public List<Carrinho> findByUserId(@PathVariable Long idUser) {
 
-        return carrinhoService.findByUserId(user.getName());
+        return carrinhoService.findByUserId(idUser);
 
     }
 
-    @PostMapping("/carrinhos")
-    public Carrinho create(@AuthenticationPrincipal UserDetailsImpl user,
+    @PostMapping("/carrinhos/{idUser}")
+    public Carrinho create(@PathVariable Long idUser,
             @RequestBody CarrinhoRequest carrinhoRequest) {
-        return carrinhoService.addCarrinho(Long.parseLong(user.getUsername()),Long.parseLong(carrinhoRequest.getProdutoId()) ,
+        return carrinhoService.addCarrinho(idUser,carrinhoRequest.getProdutoId() ,
                 carrinhoRequest.getQuantidade());
     }
 
-    @PutMapping("/carrinhos/{produtoId}")
-    public Carrinho update(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+    @PutMapping("/carrinhos/{produtoId}/{idUser}")
+    public Carrinho update(@PathVariable Long idUser,
             @PathVariable("produtoId") String produtoId,
             @RequestParam("quantidade") Double quantidade) {
 
-                return carrinhoService.updateQuantidade(Long.parseLong(userDetailsImpl.getUsername()),Long.parseLong(produtoId) , quantidade);
+                return carrinhoService.updateQuantidade(idUser,Long.parseLong(produtoId) , quantidade);
 
     }
 
-    @DeleteMapping("/carrinhos/{produtoId}")
-    public void delete(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl,@PathVariable("produtoId") String produtoId){
-        carrinhoService.delete(Long.parseLong(userDetailsImpl.getUsername()), Long.parseLong(produtoId));
+    @DeleteMapping("/carrinhos/{produtoId}/{idUser}")
+    public void delete(@PathVariable Long idUser,@PathVariable("produtoId") String produtoId){
+        carrinhoService.delete(idUser, Long.parseLong(produtoId));
     }
 
 }

@@ -30,12 +30,12 @@ public class CarrinhoService {
     private UserRepository userRepository;
 
     @Transactional
-    public Carrinho addCarrinho(Long username,Long produtoId,Double quantidade){
+    public Carrinho addCarrinho(Long idUser,Long produtoId,Double quantidade){
 
         Produto produto = produtoRepository.findById(produtoId)
             .orElseThrow(() -> new BadRequestException("Produto de id "+produtoId+" não encontrado"));
 
-        Optional<Carrinho> optionalCarrinho = carrinhoRepository.findByUserIdAndProdutoId(username,produtoId);
+        Optional<Carrinho> optionalCarrinho = carrinhoRepository.findByUserIdAndProdutoId(idUser,produtoId);
         Carrinho carrinho;
         if(optionalCarrinho.isPresent()){   
             carrinho = optionalCarrinho.get();
@@ -48,7 +48,7 @@ public class CarrinhoService {
             carrinho.setQuantidade(quantidade);
             carrinho.setPreco(produto.getPrice());
             carrinho.setQuantia(new BigDecimal(carrinho.getPreco().doubleValue()*carrinho.getQuantidade()));
-            carrinho.setUser(new User(username));
+            carrinho.setUser(new User(idUser));
             carrinhoRepository.save(carrinho);
         }
 
@@ -56,8 +56,8 @@ public class CarrinhoService {
 
     }
 
-    public Carrinho updateQuantidade(Long username,Long produtoId,Double quantidade){
-        Carrinho carrinho = carrinhoRepository.findByUserIdAndProdutoId(username, produtoId)
+    public Carrinho updateQuantidade(Long idUser,Long produtoId,Double quantidade){
+        Carrinho carrinho = carrinhoRepository.findByUserIdAndProdutoId(idUser, produtoId)
             .orElseThrow(()->new BadRequestException("Produto Id "+produtoId+" não foi encontrado no seu carrinho"));
         
         carrinho.setQuantidade(quantidade);
@@ -67,18 +67,18 @@ public class CarrinhoService {
 
     }
 
-    public void delete(Long username,Long produtoId){
+    public void delete(Long idUser,Long produtoId){
 
-        Carrinho carrinho = carrinhoRepository.findByUserIdAndProdutoId(username, produtoId)
+        Carrinho carrinho = carrinhoRepository.findByUserIdAndProdutoId(idUser, produtoId)
             .orElseThrow(()->new BadRequestException("Produto Id "+produtoId+" não foi encontrado no seu carrinho"));
 
         carrinhoRepository.delete(carrinho);
 
     }
 
-    public List<Carrinho> findByUserId(String email){
+    public List<Carrinho> findByUserId(Long id){
 
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+        Optional<User> optionalUser = userRepository.findById(id);
 
         if(optionalUser.isPresent()){
             return carrinhoRepository.findByUserId(optionalUser.get().getId());

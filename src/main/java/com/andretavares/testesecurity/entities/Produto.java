@@ -1,14 +1,14 @@
 package com.andretavares.testesecurity.entities;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Produto implements Serializable{
+public class Produto implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,21 +26,26 @@ public class Produto implements Serializable{
     private String description;
     private String picture;
 
-    @JoinColumn
-    @ManyToOne
-    private Categoria categoria;
-    private BigDecimal price;
+    // @OneToOne(mappedBy = "cor")
+    // private Cor cor;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "cor_id", referencedColumnName = "id")
+    private Cor cor;
+
+    private Long price;
     private Long estoque;
-    
-    public Produto(String name, String description, String picture, Categoria categoria, BigDecimal price,
+    public Produto(String name, String description, String picture, Categoria categoria, Cor cor, Long price,
             Long estoque) {
         this.name = name;
         this.description = description;
         this.picture = picture;
-        this.categoria = categoria;
+        this.cor = cor;
         this.price = price;
         this.estoque = estoque;
     }
+    
+    // Getters e setters
 
     
 }
