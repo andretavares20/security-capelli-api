@@ -1,7 +1,7 @@
 package com.andretavares.testesecurity.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,7 +28,6 @@ public class OrdemLog implements Serializable{
     private User user;
     private Integer logType;
     private String logMessage;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date time;
+    private LocalDateTime time;
 
 }

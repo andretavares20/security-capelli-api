@@ -1,6 +1,7 @@
 package com.andretavares.testesecurity.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -33,9 +34,9 @@ public class Produto implements Serializable {
     @JoinColumn(name = "cor_id", referencedColumnName = "id")
     private Cor cor;
 
-    private Long price;
+    private BigDecimal price;
     private Long estoque;
-    public Produto(String name, String description, String picture, Categoria categoria, Cor cor, Long price,
+    public Produto(String name, String description, String picture, Categoria categoria, Cor cor, BigDecimal price,
             Long estoque) {
         this.name = name;
         this.description = description;

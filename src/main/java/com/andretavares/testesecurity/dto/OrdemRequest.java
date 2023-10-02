@@ -10,7 +10,7 @@ import lombok.Data;
 public class OrdemRequest implements Serializable {
     
     private BigDecimal envio;
-    private String endereçoEnvio;
+    private String enderecoEnvio;
     private List<CarrinhoRequest> items;
 
 }

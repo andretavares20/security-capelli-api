@@ -14,7 +14,7 @@ public class ProdutoDto {
     private String description;
     private String picture;
     private Long corId;
-    private Long price;
+    private BigDecimal price;
     private Long estoque;
 
 }

@@ -84,7 +84,7 @@ public class CarrinhoController {
     @PutMapping("/carrinhos/{produtoId}/{idUser}")
     public Carrinho update(@PathVariable Long idUser,
             @PathVariable("produtoId") String produtoId,
-            @RequestParam("quantidade") Double quantidade) {
+            @RequestParam("quantidade") Long quantidade) {
 
                 return carrinhoService.updateQuantidade(idUser,Long.parseLong(produtoId) , quantidade);
 

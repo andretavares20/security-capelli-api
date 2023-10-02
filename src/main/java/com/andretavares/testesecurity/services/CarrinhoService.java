@@ -30,7 +30,7 @@ public class CarrinhoService {
     private UserRepository userRepository;
 
     @Transactional
-    public Carrinho addCarrinho(Long idUser,Long produtoId,Double quantidade){
+    public Carrinho addCarrinho(Long idUser,Long produtoId,Long quantidade){
 
         Produto produto = produtoRepository.findById(produtoId)
             .orElseThrow(() -> new BadRequestException("Produto de id "+produtoId+" não encontrado"));
@@ -56,7 +56,7 @@ public class CarrinhoService {
 
     }
 
-    public Carrinho updateQuantidade(Long idUser,Long produtoId,Double quantidade){
+    public Carrinho updateQuantidade(Long idUser,Long produtoId,Long quantidade){
         Carrinho carrinho = carrinhoRepository.findByUserIdAndProdutoId(idUser, produtoId)
             .orElseThrow(()->new BadRequestException("Produto Id "+produtoId+" não foi encontrado no seu carrinho"));
         

@@ -2,6 +2,7 @@ package com.andretavares.testesecurity.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.andretavares.testesecurity.enums.StatusOrdem;
@@ -26,19 +27,17 @@ public class Ordem implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String number;
-    @Temporal(TemporalType.DATE)
-    private Date data;
+    private LocalDateTime data;
     @JoinColumn
     @ManyToOne
     private User user;
     private String enderecoEnvio;
-    private BigDecimal quantidade;
+    private BigDecimal quantia;
     private BigDecimal envio;
     private BigDecimal total;
     @Enumerated(EnumType.STRING)
     private StatusOrdem statusOrdem;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date horaMensagem;
+    private LocalDateTime horaMensagem;
     
 
 }
