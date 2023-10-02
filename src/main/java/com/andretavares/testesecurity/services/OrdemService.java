@@ -99,7 +99,7 @@ public class OrdemService {
     }
 
     @Transactional
-    public Ordem calcelOrdem(Long ordemId,Long userId){
+    public Ordem cancelOrdem(Long ordemId,Long userId){
         Ordem ordem = ordemRepository.findById(ordemId)
             .orElseThrow(() -> new ResourceNotFoundException("Ordem Id: "+ordemId+ "não encontrado"));
         if(!userId.equals(ordem.getUser().getId())){
@@ -110,8 +110,29 @@ public class OrdemService {
         }
 
         ordem.setStatusOrdem(StatusOrdem.CANCELED);
+        Ordem saved = ordemRepository.save(ordem);
+        ordemLogService.createLog(userId, saved, OrdemLogService.CANCELED, "Pedido cancelado com sucesso");
 
-        return null;
+        return saved;
+        
+    }
+
+    @Transactional
+    public Ordem receberPedidos(Long ordemId,Long userId){
+        Ordem ordem = ordemRepository.findById(ordemId)
+            .orElseThrow(() -> new ResourceNotFoundException("Ordem Id: "+ordemId+ "não encontrado"));
+        if(!userId.equals(ordem.getUser().getId())){
+            throw new BadRequestException("Este pedido só pode ser cancelado pela própria pessoa");
+        }
+        if(!StatusOrdem.DELIVERY.equals(ordem.getStatusOrdem())){
+            throw new BadRequestException("Falha na recepção, o status atual do pedido é "+ordem.getStatusOrdem().name());
+        }
+
+        ordem.setStatusOrdem(StatusOrdem.CANCELED);
+        Ordem saved = ordemRepository.save(ordem);
+        ordemLogService.createLog(userId, saved, OrdemLogService.CANCELED, "Pedido cancelado com sucesso "+ordem.getStatusOrdem().name());
+
+        return saved;
         
     }
 
