@@ -3,6 +3,7 @@ package com.andretavares.testesecurity.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -69,27 +70,16 @@ public class ProdutoService {
 
     public Produto edit(Produto produto) {
 
-        if (produto.getId() == null) {
-            throw new BadRequestException("Id do produto não foi informado");
+        Optional<Produto> produtoExistente = produtoRepository.findById(produto.getId());
+        if(produtoExistente.isPresent()){
+            BeanUtils.copyProperties(produto, produtoExistente.get(),"id");
+            produtoRepository.save(produtoExistente.get());
+            return produtoExistente.get();
+        }else{
+            System.out.println("Id não encontrado no banco de dados.");
         }
 
-        if (!StringUtils.hasText(produto.getName())) {
-            throw new BadRequestException("Produto informado esta sem nome");
-        }
-
-        if (produto.getCor() == null) {
-            throw new BadRequestException("Produto informado esta sem cor");
-        }
-
-        if (produto.getCor().getId() == null) {
-            throw new BadRequestException("Cor informada esta sem id");
-        }
-
-        corRepository.findById(produto.getCor().getId())
-                .orElseThrow(() -> new BadRequestException(
-                        "Cor ID " + produto.getCor().getId() + " não existe"));
-
-        return produtoRepository.save(produto);
+        return null;
     }
 
     public Produto mudarImagem(Long id, String imagem) {

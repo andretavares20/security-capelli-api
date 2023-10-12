@@ -72,6 +72,7 @@ public class UserService {
                 userDto.getEndereco(),
                 userDto.getCelular(), userDto.getIsActive(), userDto.getSource(), userDto.getDataNascimento(),
                 userDto.getGenero());
+        user.setRole(UserRole.USER);
 
         return userRepository.save(user);
     }
@@ -148,7 +149,11 @@ public class UserService {
 
     public User postUserFacebook(String credential) {
 
-        credential = credential.replaceAll("\"", "");
+        try {  
+            credential = credential.replaceAll("\"", "");
+        } catch (Exception e) {
+            System.out.println("ERRO - credential = credential.replaceAll(\"\\\"\", \"\");");
+        }
         RestTemplate restTemplate = new RestTemplate();
 
         // Fazer a chamada para verificar o token do Facebook

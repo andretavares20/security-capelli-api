@@ -17,6 +17,8 @@ import com.andretavares.testesecurity.dto.ProdutoDto;
 import com.andretavares.testesecurity.entities.Produto;
 import com.andretavares.testesecurity.services.ProdutoService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/api")
 public class ProdutoController {
@@ -24,6 +26,7 @@ public class ProdutoController {
     @Autowired
     private ProdutoService produtoService;
 
+    @Operation(summary  = "Retorna todos os produto existentes no sistema.")
     @GetMapping("/produto")
     public List<Produto> findAll(){
 
@@ -40,6 +43,7 @@ public class ProdutoController {
         return produtoService.create(produtoDto);
     }
 
+    @Operation(summary  = "Atualizada um produto", description  = "Envie para esse endpoint o json contendo todo objeto e o id,mude apenas os dados que queira atualizar.")
     @PutMapping("/produto")
     public ResponseEntity<Produto> edit(@RequestBody Produto produto){
         

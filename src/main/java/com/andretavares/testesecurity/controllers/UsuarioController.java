@@ -3,7 +3,6 @@ package com.andretavares.testesecurity.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,19 +13,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
-import com.andretavares.testesecurity.dto.FBUser;
-import com.andretavares.testesecurity.dto.FBUserInfo;
 import com.andretavares.testesecurity.dto.SingleUserDto;
+import com.andretavares.testesecurity.dto.Token;
 import com.andretavares.testesecurity.dto.UserDto;
 import com.andretavares.testesecurity.dto.UserGoogleProviderDto;
 import com.andretavares.testesecurity.entities.User;
-import com.andretavares.testesecurity.enums.UserRole;
 import com.andretavares.testesecurity.services.UserService;
-import com.andretavares.testesecurity.source.RegistrationSource;
 
-import io.swagger.models.Response;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/api")
@@ -35,16 +30,19 @@ public class UsuarioController{
     @Autowired
     private UserService userService;
     
+    @Operation(summary  = "Cria um usuário nativo do sistema", description  = "Você precisa enviar as informações que deseja que o usuário tenha.")
     @PostMapping("/user")
     public ResponseEntity<User> create(@RequestBody UserDto userDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(userDto));
     }
 
+    @Operation(summary  = "Retorna todos os usuários do sistema.")
     @GetMapping("/users")
     public ResponseEntity<List<User>> findAll(){
         return ResponseEntity.ok().body(userService.findAll());
     }
 
+    @Operation(summary  = "Retorna usuário pelo id.", description  = "Você precisa enviar o id do usuário.")
     @GetMapping("/user/{id}")
     public ResponseEntity<SingleUserDto> findById(@PathVariable("id") Long id){
 
@@ -53,16 +51,19 @@ public class UsuarioController{
         return ResponseEntity.ok().body(singleUserDto);
     }
 
+    @Operation(summary  = "Atualiza usuário", description  = "Você precisa enviar o id do usuário e tambem o que deseja atualizar do mesmo.")
     @PutMapping("/user")
     public ResponseEntity<User> edit(@RequestBody UserDto userDto){
         return ResponseEntity.ok().body(userService.edit(userDto));
     }
 
+    @Operation(summary  = "Deleta usuário pelo id.", description  = "Você precisa enviar o id do usuário.")
     @DeleteMapping("/user/{id}")
     public void deleteById(@PathVariable("id") Long id){
         userService.deleteById(id);
     }
 
+    @Operation(summary  = "Cria um usuário do google", description  = "Envie para esse endpoint o json de resposta da api de login do Google.")
     @PostMapping("/user/google")
     public ResponseEntity<?> addUserGoogle(@RequestBody UserGoogleProviderDto userGoogleProviderDto){
         UserDto createdUserDto = userService.postUserGoogle(userGoogleProviderDto);
@@ -73,11 +74,12 @@ public class UsuarioController{
         }
     } 
 
+    @Operation(summary  = "Cria um usuário do facebook", description  = "Envie para esse endpoint o token de resposta da api de login do Facebook.")
     @PostMapping("/user/facebook")
-    public ResponseEntity<?> loginWithFacebook(@RequestBody String credential) {
+    public ResponseEntity<?> loginWithFacebook(@RequestBody Token credential) {
         try {
 
-            User user = userService.postUserFacebook(credential);
+            User user = userService.postUserFacebook(credential.getToken());
 
             return ResponseEntity.ok().body(user);
 
