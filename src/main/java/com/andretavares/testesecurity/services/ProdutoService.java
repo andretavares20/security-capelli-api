@@ -1,5 +1,6 @@
 package com.andretavares.testesecurity.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,15 +8,22 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.andretavares.testesecurity.dto.ProdutoDto;
+import com.andretavares.testesecurity.dto.UploadFileResponse;
+import com.andretavares.testesecurity.entities.Arquivo;
 import com.andretavares.testesecurity.entities.Categoria;
 import com.andretavares.testesecurity.entities.Cor;
+import com.andretavares.testesecurity.entities.OrdemItem;
 import com.andretavares.testesecurity.entities.Produto;
 import com.andretavares.testesecurity.exceptions.BadRequestException;
 import com.andretavares.testesecurity.exceptions.ResourceNotFoundException;
 import com.andretavares.testesecurity.repositories.CategoriaRepository;
 import com.andretavares.testesecurity.repositories.CorRepository;
+import com.andretavares.testesecurity.repositories.OrdemItemRepository;
+import com.andretavares.testesecurity.repositories.OrdemLogRepository;
+import com.andretavares.testesecurity.repositories.OrdemRepository;
 import com.andretavares.testesecurity.repositories.ProdutoRepository;
 
 @Service
@@ -30,6 +38,18 @@ public class ProdutoService {
     @Autowired
     private CorRepository corRepository;
 
+    @Autowired
+    private OrdemItemRepository ordemItemRepository;
+
+    @Autowired
+    private OrdemRepository ordemRepository;
+
+    @Autowired
+    private OrdemLogRepository ordemLogRepository;
+
+    @Autowired
+    private FileService fileService;
+
     public List<Produto> findAll() {
         return produtoRepository.findAll();
     }
@@ -39,7 +59,7 @@ public class ProdutoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
     }
 
-    public Produto create(ProdutoDto produtoDto) {
+    public Produto create(ProdutoDto produtoDto,List<MultipartFile> files) {
 
         if (!StringUtils.hasText(produtoDto.getName())) {
             throw new BadRequestException("Produto informado esta sem nome");
@@ -62,8 +82,17 @@ public class ProdutoService {
                         "Categoria ID " + cor.getCategoria().getId() + " não existe"));
 
 
-        Produto produto = new Produto(produtoDto.getName(), produtoDto.getDescription(), produtoDto.getPicture(),
+        Produto produto = new Produto(produtoDto.getName(), produtoDto.getDescription(),
                 categoria, cor, produtoDto.getPrice(), produtoDto.getEstoque());
+
+        List<Arquivo> arquivos = new ArrayList<>();
+
+        for(MultipartFile file:files){
+            UploadFileResponse response = fileService.uploadFile(file);
+            arquivos.add(new Arquivo(response.getFileName(),response.getFileDownloadUri(),produto));
+        }
+
+        produto.setArquivos(arquivos);
 
         return produtoRepository.save(produto);
     }
@@ -82,13 +111,16 @@ public class ProdutoService {
         return null;
     }
 
-    public Produto mudarImagem(Long id, String imagem) {
-        Produto produto = findById(id);
-        produto.setPicture(imagem);
-        return produtoRepository.save(produto);
-    }
-
     public void deleteById(Long id) {
+
+        List<OrdemItem> listOrdem = ordemItemRepository.findAllByProdutoId(id);
+
+        for(OrdemItem ordemItem:listOrdem){
+            ordemItemRepository.deleteById(ordemItem.getId());
+            ordemRepository.deleteById(ordemItem.getOrdem().getId());
+            ordemLogRepository.deleteByOrdemId(ordemItem.getOrdem().getId());
+        }
+
         produtoRepository.deleteById(id);
     }
 

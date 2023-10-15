@@ -2,10 +2,14 @@ package com.andretavares.testesecurity;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 import com.mercadopago.MercadoPagoConfig;
 
 @SpringBootApplication
+@EnableConfigurationProperties({
+	FileStorageProperties.class
+})
 public class TesteSecurityApplication {
 
 	public static void main(String[] args) {

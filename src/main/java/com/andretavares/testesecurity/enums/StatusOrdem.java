@@ -2,6 +2,6 @@ package com.andretavares.testesecurity.enums;
 
 public enum StatusOrdem {
     
-    DRAFT, PAYMENT, PACKING, DELIVERY, FINISH, CANCELED
+    RASCUNHO, PAGO, EMBALAGEM, ENTREGA, FINALIZADO, CANCELADO
 
 }

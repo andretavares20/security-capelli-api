@@ -6,4 +6,6 @@ import com.andretavares.testesecurity.entities.OrdemLog;
 
 public interface OrdemLogRepository extends JpaRepository<OrdemLog,Long>{
     
+    void deleteByOrdemId(Long ordemItem);
+
 }

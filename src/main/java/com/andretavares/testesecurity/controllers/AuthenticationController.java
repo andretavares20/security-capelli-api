@@ -24,6 +24,7 @@ import com.andretavares.testesecurity.repositories.UserRepository;
 import com.andretavares.testesecurity.services.auth.AuthService;
 import com.andretavares.testesecurity.utils.JwtUtil;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
@@ -47,6 +48,7 @@ public class AuthenticationController {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
 
+    @Operation(summary  = "Endpoint de Login", description  = "Envie para esse endpoint o corpo do login, contendo o email e a senha do usuário, obtenha o token de acesso o id do usuário e a Role a qual ele pertence.")
     @PostMapping("/api/authenticate")
     public ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest,
             HttpServletResponse response)

@@ -16,12 +16,12 @@ public class OrdemLogService {
     @Autowired
     private OrdemLogRepository ordemLogRepository;
 
-    public final static int DRAFT=0;
-    public final static int PAYMENT=10;
-    public final static int PACKING=20;
-    public final static int DELIVERY=30;
-    public final static int FINISH=40;
-    public final static int CANCELED=90;
+    public final static int RASCUNHO=0;
+    public final static int PAGAMENTO=10;
+    public final static int EMBALAGEM=20;
+    public final static int ENTREGA=30;
+    public final static int FINALIZADO=40;
+    public final static int CANCELADO=90;
 
     public void createLog(Long userId,Ordem ordem, int type,String message){
         OrdemLog ordemLog = new OrdemLog();

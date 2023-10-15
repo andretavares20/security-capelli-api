@@ -18,6 +18,8 @@ import com.andretavares.testesecurity.dto.OrdemResponse;
 import com.andretavares.testesecurity.entities.Ordem;
 import com.andretavares.testesecurity.services.OrdemService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/api")
 public class OrdemController {
@@ -25,6 +27,7 @@ public class OrdemController {
     @Autowired
     private OrdemService ordemService;
 
+    @Operation(summary  = "Finaliza compra no carrinho e gera um ordem de compra em RASCUNHO", description  = "Envie para esse endpoint o id do usuário que ta realizando a compra, o json do objeto Ordem e os itens contendo o id do produto.")
     @PostMapping("/ordens")
     public ResponseEntity<OrdemResponse> create(Long userId, @RequestBody OrdemRequest request) {
 
@@ -32,6 +35,7 @@ public class OrdemController {
 
     }
 
+    @Operation(summary  = "Cancela ordem de serviço e atualiza o status para CANCELADO", description  = "Envie para esse endpoint o id do usuário que ta cancelando a ordem e o id da ordem")
     @PutMapping("/ordens/{ordemId}/cancel")
     public ResponseEntity<Ordem> cancelOrdemUser(Long userId, @PathVariable("ordemId") Long ordemId) {
 
@@ -39,20 +43,23 @@ public class OrdemController {
 
     }
 
-    @PutMapping("/ordens/{ordemId}/receber")
+    @Operation(summary  = "Finaliza a ordem de serviço após o pedido ser entregue e atualiza o status para FINALIZADO", description  = "Envie para esse endpoint o id do usuário que ta finalizando a ordem e o id da ordem")
+    @PutMapping("/ordens/{ordemId}/finalizar-pedido")
     public ResponseEntity<Ordem> receber(Long userId, @PathVariable("ordemId") Long ordemId) {
 
-        return ResponseEntity.ok().body(ordemService.receberPedidos(ordemId, userId));
+        return ResponseEntity.ok().body(ordemService.finalizarPedidos(ordemId, userId));
 
     }
 
-    @PutMapping("/ordens/{ordemId}/confirmacao")
+    @Operation(summary  = "Realiza pagamento da ordem de serviço e atualiza o status para PAGO", description  = "Envie para esse endpoint o id do usuário que pagou a ordem de serviço e o id da ordem de serviço.")
+    @PutMapping("/ordens/{ordemId}/confirmar-pagamento")
     public ResponseEntity<Ordem> confirmacao(Long userId, @PathVariable("ordemId") Long ordemId) {
 
         return ResponseEntity.ok().body(ordemService.confirmarPagamento(ordemId, userId));
 
     }
 
+    @Operation(summary  = "Após o pagamento, atualiza o status da ordem de serviço para EMBALAGEM", description  = "Envie para esse endpoint o id do usuário que ta enviando o pedido para embalar e o id da ordem de serviço.")
     @PutMapping("/ordens/{ordemId}/embalar")
     public ResponseEntity<Ordem> embalar(Long userId, @PathVariable("ordemId") Long ordemId) {
 
@@ -60,13 +67,15 @@ public class OrdemController {
 
     }
 
+    @Operation(summary  = "Após embalar e despachar para a entrega, atualiza o status da ordem de serviço para ENTREGA", description  = "Envie para esse endpoint o id do usuário que ta enviando o pedido e o id da ordem")
     @PutMapping("/ordens/{ordemId}/enviar")
     public ResponseEntity<Ordem> enviar(Long userId, @PathVariable("ordemId") Long ordemId) {
 
         return ResponseEntity.ok().body(ordemService.enviar(ordemId, userId));
 
     }
-
+    
+    @Operation(summary  = "Retorna todas as ordens existentes no banco de dados.")
     @GetMapping("/ordens")
     public ResponseEntity<List<Ordem>> findAllOrdemUser(Long userId,
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,

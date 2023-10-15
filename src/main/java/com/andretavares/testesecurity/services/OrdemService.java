@@ -58,7 +58,7 @@ public class OrdemService {
         ordem.setNumber(generateNumeroOrdem());
         ordem.setUser(new User(idUser));
         ordem.setEnderecoEnvio(request.getEnderecoEnvio());
-        ordem.setStatusOrdem(StatusOrdem.DRAFT);
+        ordem.setStatusOrdem(StatusOrdem.RASCUNHO);
         ordem.setHoraMensagem(LocalDateTime.now());
 
         List<OrdemItem> items = new ArrayList<>();
@@ -121,33 +121,33 @@ public class OrdemService {
         if (!userId.equals(ordem.getUser().getId())) {
             throw new BadRequestException("Este pedido só pode ser cancelado pela própria pessoa");
         }
-        if (!StatusOrdem.DRAFT.equals(ordem.getStatusOrdem())) {
+        if (!StatusOrdem.RASCUNHO.equals(ordem.getStatusOrdem())) {
             throw new BadRequestException("Este pedido nao pode ser cancelado pois ja foi processado");
         }
 
-        ordem.setStatusOrdem(StatusOrdem.CANCELED);
+        ordem.setStatusOrdem(StatusOrdem.CANCELADO);
         Ordem saved = ordemRepository.save(ordem);
-        ordemLogService.createLog(userId, saved, OrdemLogService.CANCELED, "Pedido cancelado com sucesso");
+        ordemLogService.createLog(userId, saved, OrdemLogService.CANCELADO, "Pedido cancelado com sucesso");
 
         return saved;
 
     }
 
     @Transactional
-    public Ordem receberPedidos(Long ordemId, Long userId) {
+    public Ordem finalizarPedidos(Long ordemId, Long userId) {
         Ordem ordem = ordemRepository.findById(ordemId)
                 .orElseThrow(() -> new ResourceNotFoundException("Ordem Id: " + ordemId + "não encontrado"));
         if (!userId.equals(ordem.getUser().getId())) {
-            throw new BadRequestException("Este pedido só pode ser cancelado pela própria pessoa");
+            throw new BadRequestException("Este pedido só pode ser finalizado pela própria pessoa");
         }
-        if (!StatusOrdem.DELIVERY.equals(ordem.getStatusOrdem())) {
+        if (!StatusOrdem.ENTREGA.equals(ordem.getStatusOrdem())) {
             throw new BadRequestException(
                     "Falha na recepção, o status atual do pedido é " + ordem.getStatusOrdem().name());
         }
 
-        ordem.setStatusOrdem(StatusOrdem.CANCELED);
+        ordem.setStatusOrdem(StatusOrdem.FINALIZADO);
         Ordem saved = ordemRepository.save(ordem);
-        ordemLogService.createLog(userId, saved, OrdemLogService.CANCELED,
+        ordemLogService.createLog(userId, saved, OrdemLogService.FINALIZADO,
                 "Pedido cancelado com sucesso " + ordem.getStatusOrdem().name());
 
         return saved;
@@ -172,14 +172,14 @@ public class OrdemService {
         Ordem ordem = ordemRepository.findById(ordemId)
                 .orElseThrow(() -> new ResourceNotFoundException("Ordem Id: " + ordemId + "não encontrado"));
 
-        if (!StatusOrdem.DRAFT.equals(ordem.getStatusOrdem())) {
+        if (!StatusOrdem.RASCUNHO.equals(ordem.getStatusOrdem())) {
             throw new BadRequestException(
                     "A confirmação do pedido falhou, o status atual do pedido é " + ordem.getStatusOrdem().name());
         }
 
-        ordem.setStatusOrdem(StatusOrdem.PAYMENT);
+        ordem.setStatusOrdem(StatusOrdem.PAGO);
         Ordem saved = ordemRepository.save(ordem);
-        ordemLogService.createLog(userId, saved, OrdemLogService.PAYMENT, "Pagamento bem sucedido e confirmado");
+        ordemLogService.createLog(userId, saved, OrdemLogService.PAGAMENTO, "Pagamento bem sucedido e confirmado");
 
         return saved;
 
@@ -190,14 +190,14 @@ public class OrdemService {
         Ordem ordem = ordemRepository.findById(ordemId)
                 .orElseThrow(() -> new ResourceNotFoundException("Ordem Id: " + ordemId + "não encontrado"));
 
-        if (!StatusOrdem.PAYMENT.equals(ordem.getStatusOrdem())) {
+        if (!StatusOrdem.PAGO.equals(ordem.getStatusOrdem())) {
             throw new BadRequestException(
                     "Falha na embalagem do pedido, o status atual do pedido é " + ordem.getStatusOrdem().name());
         }
 
-        ordem.setStatusOrdem(StatusOrdem.PACKING);
+        ordem.setStatusOrdem(StatusOrdem.EMBALAGEM);
         Ordem saved = ordemRepository.save(ordem);
-        ordemLogService.createLog(userId, saved, OrdemLogService.PACKING, "Pedidos estão sendo preparados");
+        ordemLogService.createLog(userId, saved, OrdemLogService.EMBALAGEM, "Pedidos estão sendo preparados");
 
         return saved;
 
@@ -208,14 +208,14 @@ public class OrdemService {
         Ordem ordem = ordemRepository.findById(ordemId)
                 .orElseThrow(() -> new ResourceNotFoundException("Ordem Id: " + ordemId + "não encontrado"));
 
-        if (!StatusOrdem.PACKING.equals(ordem.getStatusOrdem())) {
+        if (!StatusOrdem.EMBALAGEM.equals(ordem.getStatusOrdem())) {
             throw new BadRequestException(
                     "Falha na entrega do pedido, o status atual do pedido é " + ordem.getStatusOrdem().name());
         }
 
-        ordem.setStatusOrdem(StatusOrdem.DELIVERY);
+        ordem.setStatusOrdem(StatusOrdem.ENTREGA);
         Ordem saved = ordemRepository.save(ordem);
-        ordemLogService.createLog(userId, saved, OrdemLogService.DELIVERY, "Pedido está sendo enviado");
+        ordemLogService.createLog(userId, saved, OrdemLogService.ENTREGA, "Pedido está sendo enviado");
 
         return saved;
 

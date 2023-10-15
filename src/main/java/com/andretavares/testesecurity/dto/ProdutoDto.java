@@ -12,7 +12,6 @@ public class ProdutoDto {
     
     private String name;
     private String description;
-    private String picture;
     private Long corId;
     private BigDecimal price;
     private Long estoque;

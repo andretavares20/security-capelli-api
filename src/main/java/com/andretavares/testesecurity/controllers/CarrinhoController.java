@@ -23,6 +23,8 @@ import com.andretavares.testesecurity.entities.Produto;
 import com.andretavares.testesecurity.services.CarrinhoService;
 import com.andretavares.testesecurity.services.impl.UserDetailsImpl;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/api/carrinho")
 public class CarrinhoController {
@@ -30,43 +32,7 @@ public class CarrinhoController {
     @Autowired
     private CarrinhoService carrinhoService;
 
-    @PostMapping("/adicionar-produto")
-    public Produto postProdutoCarrinho(@RequestBody Produto produto, @RequestParam("userId") Long userId) {
-
-        return null;
-
-    }
-
-    @DeleteMapping("/remover-produo")
-    public Produto deleteProdutoCarrinho(@RequestParam("produtoId") Long produtoId,
-            @RequestParam("userId") Long userId) {
-
-        return null;
-
-    }
-
-    @GetMapping("/calcular-frete")
-    public Double calculaFrete(@RequestParam("userId") Long userId, @RequestParam("cep") String cep) {
-
-        return null;
-
-    }
-
-    @PostMapping("/alterar-quantidade")
-    public ResponseEntity<?> alteraQuantidadeProdutoCarrinho(@RequestParam("userId") Long userId,
-            @RequestParam("produtoId") Long produtoId, @RequestParam("quantidade") Long id) {
-
-        return null;
-
-    }
-
-    @PostMapping("/finalizar-compra")
-    public ResponseEntity<?> finalizaCompra(@RequestParam("userId") Long userId) {
-
-        return null;
-
-    }
-
+    @Operation(summary  = "Retorna carrinho de usuário", description  = "Envie para esse endpoint o id do usuario")
     @GetMapping("/carrinhos/{idUser}")
     public List<Carrinho> findByUserId(@PathVariable Long idUser) {
 
@@ -74,6 +40,7 @@ public class CarrinhoController {
 
     }
 
+    @Operation(summary  = "Adiciona uma quantidade de um produto em um carrinho", description  = "Envie para esse endpoint o id do usuario, e o corpo do carrinho contendo o id do produto e a quantidade")
     @PostMapping("/carrinhos/{idUser}")
     public Carrinho create(@PathVariable Long idUser,
             @RequestBody CarrinhoRequest carrinhoRequest) {
@@ -81,6 +48,7 @@ public class CarrinhoController {
                 carrinhoRequest.getQuantidade());
     }
 
+    @Operation(summary  = "Atualiza a quantidade de um produto em um carrinho", description  = "Envie para esse endpoint o id do usuario, o id do produto e a quantidade que deseja.")
     @PutMapping("/carrinhos/{produtoId}/{idUser}")
     public Carrinho update(@PathVariable Long idUser,
             @PathVariable("produtoId") String produtoId,
@@ -90,6 +58,7 @@ public class CarrinhoController {
 
     }
 
+    @Operation(summary  = "Remove produto do carrinho", description  = "Envie para esse endpoint o id do usuario, e o id do produto que deseja deletar.")
     @DeleteMapping("/carrinhos/{produtoId}/{idUser}")
     public void delete(@PathVariable Long idUser,@PathVariable("produtoId") String produtoId){
         carrinhoService.delete(idUser, Long.parseLong(produtoId));
