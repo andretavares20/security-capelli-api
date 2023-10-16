@@ -35,7 +35,7 @@ public class Produto implements Serializable {
     @JoinColumn(name = "cor_id", referencedColumnName = "id")
     private Cor cor;
 
-    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
     private List<Arquivo> arquivos = new ArrayList<>();
 
     public Produto(String name, String description, Categoria categoria, Cor cor, BigDecimal price,

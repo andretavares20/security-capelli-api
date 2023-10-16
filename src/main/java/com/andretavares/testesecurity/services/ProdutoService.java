@@ -59,7 +59,7 @@ public class ProdutoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
     }
 
-    public Produto create(ProdutoDto produtoDto,List<MultipartFile> files) {
+    public Produto create(ProdutoDto produtoDto) {
 
         if (!StringUtils.hasText(produtoDto.getName())) {
             throw new BadRequestException("Produto informado esta sem nome");
@@ -85,16 +85,51 @@ public class ProdutoService {
         Produto produto = new Produto(produtoDto.getName(), produtoDto.getDescription(),
                 categoria, cor, produtoDto.getPrice(), produtoDto.getEstoque());
 
-        List<Arquivo> arquivos = new ArrayList<>();
-
-        for(MultipartFile file:files){
-            UploadFileResponse response = fileService.uploadFile(file);
-            arquivos.add(new Arquivo(response.getFileName(),response.getFileDownloadUri(),produto));
-        }
-
-        produto.setArquivos(arquivos);
-
         return produtoRepository.save(produto);
+    }
+
+    public Produto addImagens(Long idProduto,List<MultipartFile> files) {
+
+        Optional<Produto> optionalProduto = produtoRepository.findById(idProduto);
+        Produto produto;
+
+        if(optionalProduto.isPresent()){
+
+            produto = optionalProduto.get();
+
+            if (!StringUtils.hasText(produto.getName())) {
+                throw new BadRequestException("Produto informado esta sem nome");
+            }
+    
+            if (produto.getCor() == null) {
+                throw new BadRequestException("Produto informado esta sem cor");
+            }
+    
+            if (produto.getCor().getId() == null) {
+                throw new BadRequestException("Cor informada esta sem id");
+            }
+    
+            Cor cor = corRepository.findById(produto.getCor().getId())
+                    .orElseThrow(() -> new BadRequestException(
+                            "Cor ID " + produto.getCor().getId() + " não existe"));
+    
+            Categoria categoria = categoriaRepository.findById(cor.getCategoria().getId())
+                    .orElseThrow(() -> new BadRequestException(
+                            "Categoria ID " + cor.getCategoria().getId() + " não existe"));
+    
+            List<Arquivo> arquivos = new ArrayList<>();
+    
+            for(MultipartFile file:files){
+                UploadFileResponse response = fileService.uploadFile(file);
+                arquivos.add(new Arquivo(response.getFileName(),response.getFileDownloadUri(),produto));
+            }
+    
+            produto.setArquivos(arquivos);
+    
+            return produtoRepository.save(produto);
+        }
+        return null;
+
     }
 
     public Produto edit(Produto produto) {

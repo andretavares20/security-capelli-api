@@ -1,7 +1,10 @@
 package com.andretavares.testesecurity.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import com.andretavares.testesecurity.controllers.Endereco;
 import com.andretavares.testesecurity.enums.UserRole;
 import com.andretavares.testesecurity.source.RegistrationSource;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -24,8 +27,6 @@ public class UserDto {
     @JsonIgnore
     private byte[] img;
 
-    private String endereco;
-
     private String celular;
 
     private Boolean isActive;
@@ -36,5 +37,7 @@ public class UserDto {
     private Date dataNascimento;
 
     private String genero;
+
+    private List<Endereco> enderecos = new ArrayList<>();
     
 }

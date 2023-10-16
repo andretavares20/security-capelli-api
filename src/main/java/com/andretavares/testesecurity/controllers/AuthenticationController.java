@@ -49,7 +49,7 @@ public class AuthenticationController {
     public static final String HEADER_STRING = "Authorization";
 
     @Operation(summary  = "Endpoint de Login", description  = "Envie para esse endpoint o corpo do login, contendo o email e a senha do usuário, obtenha o token de acesso o id do usuário e a Role a qual ele pertence.")
-    @PostMapping("/api/authenticate")
+    @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest,
             HttpServletResponse response)
             throws IOException, JSONException {

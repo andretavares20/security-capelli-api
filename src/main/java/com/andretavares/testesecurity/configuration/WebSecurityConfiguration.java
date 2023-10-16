@@ -30,80 +30,77 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 @EnableWebSecurity
 public class WebSecurityConfiguration {
 
-    private final JwtRequestFilter jwtRequestFilter;
+        private final JwtRequestFilter jwtRequestFilter;
 
-    public WebSecurityConfiguration(JwtRequestFilter jwtRequestFilter) {
-        this.jwtRequestFilter = jwtRequestFilter;
-    }
+        public WebSecurityConfiguration(JwtRequestFilter jwtRequestFilter) {
+                this.jwtRequestFilter = jwtRequestFilter;
+        }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
-        // return httpSecurity.csrf().disable()
-        // .authorizeHttpRequests().requestMatchers("/authenticate","/api/**","/LoginWithFacebook","/pagamento/**").permitAll()
-        // .and()
-        // .authorizeHttpRequests().requestMatchers("/api/**").authenticated()
-        // .and()
-        // .sessionManagement()
-        // .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        // .and()
-        // .addFilterBefore(jwtRequestFilter,
-        // UsernamePasswordAuthenticationFilter.class)
-        // .build();
+                // return httpSecurity.csrf().disable()
+                // .authorizeHttpRequests().requestMatchers("/authenticate","/api/**","/LoginWithFacebook","/pagamento/**").permitAll()
+                // .and()
+                // .authorizeHttpRequests().requestMatchers("/api/**").authenticated()
+                // .and()
+                // .sessionManagement()
+                // .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                // .and()
+                // .addFilterBefore(jwtRequestFilter,
+                // UsernamePasswordAuthenticationFilter.class)
+                // .build();
 
-        return httpSecurity
-                .csrf(csrf -> csrf
-                        .disable())
-                .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/api/authenticate", "/sign-up", "/error/**","LoginWithFacebook","/pagamento/**")
-                        .permitAll())
-                .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/api/**")
-                        .authenticated())
-                .sessionManagement(management -> management
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                return httpSecurity
+                                .csrf(csrf -> csrf
+                                                .disable())
+                                .authorizeHttpRequests(requests -> requests
+                                                .requestMatchers("/api/**").authenticated().anyRequest().permitAll())
+                                .sessionManagement(management -> management
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                                .build();
 
-    }
+        }
 
-    @Bean
-    @Profile("dev")
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring()
-                .requestMatchers("/swagger-ui/**", "/v3/**");
-    }
+        @Bean
+        @Profile("dev")
+        public WebSecurityCustomizer webSecurityCustomizer() {
+                return (web) -> web.ignoring()
+                                .requestMatchers("/swagger-ui/**", "/v3/**");
+        }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
+        @Bean
+        public PasswordEncoder passwordEncoder() {
 
-        return new BCryptPasswordEncoder();
+                return new BCryptPasswordEncoder();
 
-    }
+        }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        @Bean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
 
-        return configuration.getAuthenticationManager();
+                return configuration.getAuthenticationManager();
 
-    }
+        }
 
-    @Bean
-    public OpenAPI openAPI() {
-        return new OpenAPI().addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
-                .components(new Components().addSecuritySchemes("Bearer Authentication",
-                        createAPIKeyScheme()))
-                .info(new Info().title("Api Capelli Megahair")
-                        .description("Ambiente de testes das API's do Site Capelli Megahair")
-                        .version("1.0").contact(new Contact().name("André Tavares")
-                                .email("www.capellimegahair.com.br").url("andretavares16@gmail.com"))
-                        .license(new License().name("License of API")
-                                .url("API license URL")));
-    }
+        @Bean
+        public OpenAPI openAPI() {
+                return new OpenAPI().addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
+                                .components(new Components().addSecuritySchemes("Bearer Authentication",
+                                                createAPIKeyScheme()))
+                                .info(new Info().title("Api Capelli Megahair")
+                                                .description("Ambiente de testes das API's do Site Capelli Megahair")
+                                                .version("1.0").contact(new Contact().name("André Tavares")
+                                                                .email("www.capellimegahair.com.br")
+                                                                .url("andretavares16@gmail.com"))
+                                                .license(new License().name("License of API")
+                                                                .url("API license URL")));
+        }
 
-    private SecurityScheme createAPIKeyScheme() {
-        return new SecurityScheme().type(SecurityScheme.Type.HTTP)
-                .bearerFormat("JWT")
-                .scheme("bearer");
-    }
+        private SecurityScheme createAPIKeyScheme() {
+                return new SecurityScheme().type(SecurityScheme.Type.HTTP)
+                                .bearerFormat("JWT")
+                                .scheme("bearer");
+        }
 }

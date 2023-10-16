@@ -24,30 +24,40 @@ import com.andretavares.testesecurity.services.ProdutoService;
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/produto")
 public class ProdutoController {
 
     @Autowired
     private ProdutoService produtoService;
 
     @Operation(summary = "Retorna todos os produto existentes no sistema.")
-    @GetMapping("/produto")
+    @GetMapping()
     public List<Produto> findAll() {
 
         return produtoService.findAll();
     }
 
     @Operation(summary = "Retorna um produto pelo id", description = "Envie para esse endpoint o id do produto")
-    @GetMapping("/produto/{id}")
+    @GetMapping("/{id}")
     public Produto findById(@PathVariable("id") Long id) {
         return produtoService.findById(id);
     }
 
     @Operation(summary = "Cria um produto", description = "Envie para esse endpoint o JSON contendo os dados do produto e imagens")
-    @PostMapping(value = "/produto", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public Produto create(@RequestPart("produtoDto") ProdutoDto produtoDto,
+    @PostMapping()
+    public ResponseEntity<Object> create(@RequestBody ProdutoDto produtoDto) {
+
+        return ResponseEntity.ok().body(produtoService.create(produtoDto));
+
+    }
+
+    @Operation(summary = "Adiciona imagens a um produto", description = "Envie para esse endpoint o JSON contendo os dados do produto e imagens")
+    @PostMapping(value = "/adicionar-imagens", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<Object> addImagens(@RequestParam Long idProduto,
             @RequestPart("files") List<MultipartFile> files) {
-        return produtoService.create(produtoDto, files);
+
+        return ResponseEntity.ok().body(produtoService.addImagens(idProduto, files));
+        
     }
 
     @Operation(summary = "Atualizada um produto", description = "Envie para esse endpoint o json contendo todo objeto e o id,mude apenas os dados que queira atualizar.")

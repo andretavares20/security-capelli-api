@@ -1,5 +1,6 @@
 package com.andretavares.testesecurity.services;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -10,13 +11,12 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import com.andretavares.testesecurity.controllers.Endereco;
 import com.andretavares.testesecurity.dto.FBUser;
 import com.andretavares.testesecurity.dto.FBUserInfo;
 import com.andretavares.testesecurity.dto.SingleUserDto;
@@ -61,7 +61,7 @@ public class UserService {
         List<User> userList = userRepository.findAllByEmail(userDto.getEmail());
 
         for (User user : userList) {
-            if (user.getEmail() == userDto.getEmail() && user.getRole() == null) {
+            if (user.getEmail().equals(userDto.getEmail())) {
                 throw new BadRequestException(
                         "Já existe um usuário CUSTOM com email " + userDto.getEmail() + " criado");
             }
@@ -69,12 +69,22 @@ public class UserService {
 
         User user = new User(userDto.getId(), userDto.getEmail(),
                 new BCryptPasswordEncoder().encode(userDto.getPassword()), userDto.getName(), userDto.getRole(),
-                userDto.getEndereco(),
                 userDto.getCelular(), userDto.getIsActive(), userDto.getSource(), userDto.getDataNascimento(),
                 userDto.getGenero());
         user.setRole(UserRole.USER);
 
-        return userRepository.save(user);
+        User userSaved = userRepository.save(user);
+        List<Endereco> listEndereco = new ArrayList<>();
+
+        List<Endereco> enderecos = userDto.getEnderecos();
+        for(Endereco endereco:enderecos){
+            endereco.setUser(userSaved);
+            listEndereco.add(endereco);
+        }
+
+        userSaved.setEnderecos(listEndereco);
+
+        return userRepository.save(userSaved);
     }
 
     public User edit(UserDto userDto) {
@@ -149,7 +159,7 @@ public class UserService {
 
     public User postUserFacebook(String credential) {
 
-        try {  
+        try {
             credential = credential.replaceAll("\"", "");
         } catch (Exception e) {
             System.out.println("ERRO - credential = credential.replaceAll(\"\\\"\", \"\");");
@@ -178,7 +188,7 @@ public class UserService {
                 .findFirst()
                 .orElse(null);
 
-        if (userExist==null) {
+        if (userExist == null) {
 
             User user = facebookUserInfoToUser(userContentObj);
             userRepository.save(user);
