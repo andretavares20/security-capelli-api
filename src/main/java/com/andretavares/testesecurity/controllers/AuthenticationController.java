@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,8 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.andretavares.testesecurity.dto.AuthenticationRequest;
 import com.andretavares.testesecurity.dto.AuthenticationResponse;
+import com.andretavares.testesecurity.dto.UserDto;
 import com.andretavares.testesecurity.entities.User;
 import com.andretavares.testesecurity.repositories.UserRepository;
+import com.andretavares.testesecurity.services.UserService;
 import com.andretavares.testesecurity.services.auth.AuthService;
 import com.andretavares.testesecurity.utils.JwtUtil;
 
@@ -45,11 +48,14 @@ public class AuthenticationController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private UserService userService;
+
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
 
     @Operation(summary  = "Endpoint de Login", description  = "Envie para esse endpoint o corpo do login, contendo o email e a senha do usuário, obtenha o token de acesso o id do usuário e a Role a qual ele pertence.")
-    @PostMapping("/authenticate")
+    @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest,
             HttpServletResponse response)
             throws IOException, JSONException {
@@ -88,6 +94,12 @@ public class AuthenticationController {
 
         return ResponseEntity.ok().body(authenticationResponse);
 
+    }
+
+    @Operation(summary  = "Cria um usuário nativo do sistema", description  = "Você precisa enviar as informações que deseja que o usuário tenha.")
+    @PostMapping("/register")
+    public ResponseEntity<User> create(@RequestBody UserDto userDto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(userDto));
     }
 
     // @PostMapping("/sign-up")

@@ -24,26 +24,20 @@ import com.andretavares.testesecurity.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UsuarioController{
 
     @Autowired
     private UserService userService;
-    
-    @Operation(summary  = "Cria um usuário nativo do sistema", description  = "Você precisa enviar as informações que deseja que o usuário tenha.")
-    @PostMapping("/user")
-    public ResponseEntity<User> create(@RequestBody UserDto userDto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(userDto));
-    }
 
     @Operation(summary  = "Retorna todos os usuários do sistema.")
-    @GetMapping("/users")
+    @GetMapping()
     public ResponseEntity<List<User>> findAll(){
         return ResponseEntity.ok().body(userService.findAll());
     }
 
     @Operation(summary  = "Retorna usuário pelo id.", description  = "Você precisa enviar o id do usuário.")
-    @GetMapping("/user/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<SingleUserDto> findById(@PathVariable("id") Long id){
 
         SingleUserDto singleUserDto = userService.getUserById(id);
@@ -52,19 +46,19 @@ public class UsuarioController{
     }
 
     @Operation(summary  = "Atualiza usuário", description  = "Você precisa enviar o id do usuário e tambem o que deseja atualizar do mesmo.")
-    @PutMapping("/user")
+    @PutMapping()
     public ResponseEntity<User> edit(@RequestBody UserDto userDto){
         return ResponseEntity.ok().body(userService.edit(userDto));
     }
 
     @Operation(summary  = "Deleta usuário pelo id.", description  = "Você precisa enviar o id do usuário.")
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping("/{id}")
     public void deleteById(@PathVariable("id") Long id){
         userService.deleteById(id);
     }
 
     @Operation(summary  = "Cria um usuário do google", description  = "Envie para esse endpoint o json de resposta da api de login do Google.")
-    @PostMapping("/user/google")
+    @PostMapping("/google")
     public ResponseEntity<?> addUserGoogle(@RequestBody UserGoogleProviderDto userGoogleProviderDto){
         UserDto createdUserDto = userService.postUserGoogle(userGoogleProviderDto);
         if(createdUserDto == null){
@@ -75,7 +69,7 @@ public class UsuarioController{
     } 
 
     @Operation(summary  = "Cria um usuário do facebook", description  = "Envie para esse endpoint o token de resposta da api de login do Facebook.")
-    @PostMapping("/user/facebook")
+    @PostMapping("/facebook")
     public ResponseEntity<?> loginWithFacebook(@RequestBody Token credential) {
         try {
 
