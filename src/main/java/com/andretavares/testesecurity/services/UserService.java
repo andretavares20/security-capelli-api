@@ -16,12 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
-import com.andretavares.testesecurity.controllers.Endereco;
 import com.andretavares.testesecurity.dto.FBUser;
 import com.andretavares.testesecurity.dto.FBUserInfo;
 import com.andretavares.testesecurity.dto.SingleUserDto;
 import com.andretavares.testesecurity.dto.UserDto;
 import com.andretavares.testesecurity.dto.UserGoogleProviderDto;
+import com.andretavares.testesecurity.entities.Endereco;
 import com.andretavares.testesecurity.entities.User;
 import com.andretavares.testesecurity.enums.UserRole;
 import com.andretavares.testesecurity.exceptions.BadRequestException;

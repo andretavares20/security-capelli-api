@@ -1,6 +1,5 @@
-package com.andretavares.testesecurity.controllers;
+package com.andretavares.testesecurity.entities;
 
-import com.andretavares.testesecurity.entities.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
