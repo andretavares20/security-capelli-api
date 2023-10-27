@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.andretavares.testesecurity.dto.CarrinhoRequest;
@@ -19,6 +22,7 @@ import com.andretavares.testesecurity.entities.OrdemItem;
 import com.andretavares.testesecurity.entities.Produto;
 import com.andretavares.testesecurity.entities.User;
 import com.andretavares.testesecurity.enums.StatusOrdem;
+import com.andretavares.testesecurity.exceptions.ApiRequestException;
 import com.andretavares.testesecurity.exceptions.BadRequestException;
 import com.andretavares.testesecurity.exceptions.ResourceNotFoundException;
 import com.andretavares.testesecurity.repositories.OrdemItemRepository;
@@ -219,6 +223,24 @@ public class OrdemService {
 
         return saved;
 
+    }
+
+    public Ordem getOrdemById(Long ordemId) {
+        return ordemRepository.findById(ordemId)
+                .orElseThrow(() -> new ApiRequestException("Ordem não foi encontrada", HttpStatus.NOT_FOUND));
+    }
+
+    public List<OrdemItem> getOrdemItemsByOrdemId(Long ordemId) {
+        Ordem ordem = getOrdemById(ordemId);
+        return ordem.getOrdemItems();
+    }
+
+    @Transactional
+    public String deleteOrdem(Long ordemId) {
+        Ordem ordem = ordemRepository.findById(ordemId)
+                .orElseThrow(() -> new ApiRequestException("Ordem não encontrada", HttpStatus.NOT_FOUND));
+        ordemRepository.delete(ordem);
+        return "Order deleted successfully";
     }
 
 }

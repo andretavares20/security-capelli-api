@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -74,8 +75,12 @@ public class AuthenticationController {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
 
         Optional<User> optionalUser = userRepository.findFirstByEmail(userDetails.getUsername());
+        String role="";
+        for(GrantedAuthority grantedAuthority:userDetails.getAuthorities()){
+            role = grantedAuthority.getAuthority().toString();
+        }
 
-        final String jwtToken = jwtUtil.generateToken(userDetails.getUsername());
+        final String jwtToken = jwtUtil.generateToken(userDetails.getUsername(),role);
 
         // if (optionalUser.isPresent()) {
         //     response.getWriter().write(new JSONObject()
