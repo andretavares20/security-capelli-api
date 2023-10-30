@@ -1,11 +1,13 @@
 package com.andretavares.testesecurity.services;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,6 +52,9 @@ public class ProdutoService {
     @Autowired
     private FileService fileService;
 
+    @Value("${s3.bucket-name.arquivos}")
+    private String S3_BUCKET_NAME_ARQUIVOS;
+
     public List<Produto> findAll() {
         return produtoRepository.findAll();
     }
@@ -81,51 +86,52 @@ public class ProdutoService {
                 .orElseThrow(() -> new BadRequestException(
                         "Categoria ID " + cor.getCategoria().getId() + " não existe"));
 
-
         Produto produto = new Produto(produtoDto.getName(), produtoDto.getDescription(),
                 categoria, cor, produtoDto.getPrice(), produtoDto.getEstoque());
 
         return produtoRepository.save(produto);
     }
 
-    public Produto addImagens(Long idProduto,List<MultipartFile> files) {
+    public Produto addImagens(Long idProduto, List<MultipartFile> files) throws IOException {
 
         Optional<Produto> optionalProduto = produtoRepository.findById(idProduto);
         Produto produto;
 
-        if(optionalProduto.isPresent()){
+        if (optionalProduto.isPresent()) {
 
             produto = optionalProduto.get();
 
             if (!StringUtils.hasText(produto.getName())) {
                 throw new BadRequestException("Produto informado esta sem nome");
             }
-    
+
             if (produto.getCor() == null) {
                 throw new BadRequestException("Produto informado esta sem cor");
             }
-    
+
             if (produto.getCor().getId() == null) {
                 throw new BadRequestException("Cor informada esta sem id");
             }
-    
+
             Cor cor = corRepository.findById(produto.getCor().getId())
                     .orElseThrow(() -> new BadRequestException(
                             "Cor ID " + produto.getCor().getId() + " não existe"));
-    
+
             Categoria categoria = categoriaRepository.findById(cor.getCategoria().getId())
                     .orElseThrow(() -> new BadRequestException(
                             "Categoria ID " + cor.getCategoria().getId() + " não existe"));
-    
+
             List<Arquivo> arquivos = new ArrayList<>();
-    
-            for(MultipartFile file:files){
-                UploadFileResponse response = fileService.uploadFile(file);
-                arquivos.add(new Arquivo(response.getFileName(),response.getFileDownloadUri(),produto));
+
+            for (MultipartFile file : files) {
+                UploadFileResponse response = fileService.uploadFile(file, S3_BUCKET_NAME_ARQUIVOS);
+                if (response.getFileName()!=""){
+                    arquivos.add(new Arquivo(response.getFileName(), response.getFileDownloadUri()+"/"+response.getFileName(),file.getOriginalFilename(), produto));
+                }
             }
-    
             produto.setArquivos(arquivos);
-    
+
+
             return produtoRepository.save(produto);
         }
         return null;
@@ -135,11 +141,11 @@ public class ProdutoService {
     public Produto edit(Produto produto) {
 
         Optional<Produto> produtoExistente = produtoRepository.findById(produto.getId());
-        if(produtoExistente.isPresent()){
-            BeanUtils.copyProperties(produto, produtoExistente.get(),"id");
+        if (produtoExistente.isPresent()) {
+            BeanUtils.copyProperties(produto, produtoExistente.get(), "id");
             produtoRepository.save(produtoExistente.get());
             return produtoExistente.get();
-        }else{
+        } else {
             System.out.println("Id não encontrado no banco de dados.");
         }
 
@@ -150,7 +156,7 @@ public class ProdutoService {
 
         List<OrdemItem> listOrdem = ordemItemRepository.findAllByProdutoId(id);
 
-        for(OrdemItem ordemItem:listOrdem){
+        for (OrdemItem ordemItem : listOrdem) {
             ordemItemRepository.deleteById(ordemItem.getId());
             ordemRepository.deleteById(ordemItem.getOrdem().getId());
             ordemLogRepository.deleteByOrdemId(ordemItem.getOrdem().getId());

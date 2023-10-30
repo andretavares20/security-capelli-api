@@ -22,6 +22,7 @@ public class Arquivo {
     private Long id;
     private String nome;
     private String caminho;
+    private String nomeVerdadeiro;
 
     @ManyToOne
     @JoinColumn(name = "produto_id")
@@ -31,6 +32,13 @@ public class Arquivo {
     public Arquivo(String nome, String caminho, Produto produto) {
         this.nome = nome;
         this.caminho = caminho;
+        this.produto = produto;
+    }
+
+    public Arquivo(String nome, String caminho, String nomeVerdadeiro, Produto produto) {
+        this.nome = nome;
+        this.caminho = caminho;
+        this.nomeVerdadeiro = nomeVerdadeiro;
         this.produto = produto;
     }
     

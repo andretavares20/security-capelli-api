@@ -1,5 +1,6 @@
 package com.andretavares.testesecurity.controllers;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,7 @@ public class AdminController {
     @Operation(summary = "Adiciona imagens a um produto", description = "Envie para esse endpoint o JSON contendo os dados do produto e imagens")
     @PostMapping(value = "/adicionar-imagens", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<Object> addImagens(@RequestParam Long idProduto,
-            @RequestPart("files") List<MultipartFile> files) {
+            @RequestPart("files") List<MultipartFile> files) throws IOException {
 
         return ResponseEntity.ok().body(produtoService.addImagens(idProduto, files));
         

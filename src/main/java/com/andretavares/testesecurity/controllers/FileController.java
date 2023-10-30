@@ -39,11 +39,11 @@ public class FileController {
     @PostMapping(value = "/upload-image", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE } // Note the consumes in the
                                                                                              // mapping
     )
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
+    // public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
 
-        return fileService.uploadFile(file);
+    //     return fileService.uploadFile(file);
 
-    }
+    // }
 
     @GetMapping("/images/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {

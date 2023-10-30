@@ -15,20 +15,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.andretavares.testesecurity.FileStorageProperties;
 import com.andretavares.testesecurity.exceptions.FileNotFoundException;
 import com.andretavares.testesecurity.exceptions.FileStorageException;
+import com.andretavares.testesecurity.services.amazon.AmazonService;
 
 @Service
 public class FileStorageService {
-    
+
     private final Path fileStorageLocation;
 
     @Autowired
-    public FileStorageService(FileStorageProperties properties){
+    private AmazonService amazonService;
+
+    @Autowired
+    public FileStorageService(FileStorageProperties properties) {
         this.fileStorageLocation = Paths.get(properties.getUploadDir())
-            .toAbsolutePath()
-            .normalize();
+                .toAbsolutePath()
+                .normalize();
 
         try {
             Files.createDirectories(this.fileStorageLocation);
@@ -37,29 +42,32 @@ public class FileStorageService {
         }
     }
 
-    public String storeFile(MultipartFile file){
-        try {
-            String filenameExtension = StringUtils.getFilenameExtension(StringUtils.cleanPath(file.getOriginalFilename()));
-            String fileName = UUID.randomUUID().toString() + "." + filenameExtension;
-            Path targetLocation = this.fileStorageLocation.resolve(fileName);
-            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-            return fileName;
-        } catch (IOException e) {
-            throw new FileStorageException("Não foi possível salvar o arquivo", e);
+    public String storeFile(MultipartFile file, String bucketName) throws IOException {
+
+        String filenameExtension = StringUtils.getFilenameExtension(StringUtils.cleanPath(file.getOriginalFilename()));
+        String fileName = UUID.randomUUID().toString() + "." + filenameExtension;
+
+        Path targetLocation = this.fileStorageLocation.resolve(fileName);
+        Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+        PutObjectResult putObjectResult = amazonService.putObject(filenameExtension, bucketName, fileName, targetLocation);
+        if(putObjectResult==null){
+            return "";
         }
+        return fileName;
     }
 
-    public Resource loadFileAsResource(String fileName){
+    public Resource loadFileAsResource(String fileName) {
         try {
             Path filePath = this.fileStorageLocation.resolve(fileName);
             UrlResource resource = new UrlResource(filePath.toUri());
-            if(!resource.exists()){
+            if (!resource.exists()) {
                 throw new FileNotFoundException("Arquivo não encontrado");
             }
             return resource;
         } catch (MalformedURLException e) {
-            throw new FileNotFoundException("Arquivo não encontrado",e);
+            throw new FileNotFoundException("Arquivo não encontrado", e);
         }
     }
-    
+
 }
