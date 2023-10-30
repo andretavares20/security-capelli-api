@@ -39,23 +39,13 @@ public class WebSecurityConfiguration {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
-                // return httpSecurity.csrf().disable()
-                // .authorizeHttpRequests().requestMatchers("/authenticate","/api/**","/LoginWithFacebook","/pagamento/**").permitAll()
-                // .and()
-                // .authorizeHttpRequests().requestMatchers("/api/**").authenticated()
-                // .and()
-                // .sessionManagement()
-                // .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                // .and()
-                // .addFilterBefore(jwtRequestFilter,
-                // UsernamePasswordAuthenticationFilter.class)
-                // .build();
-
                 return httpSecurity
                                 .csrf(csrf -> csrf
                                                 .disable())
                                 .authorizeHttpRequests(requests -> requests
-                                                .requestMatchers("/api/**").authenticated().anyRequest().permitAll())
+                                                .requestMatchers("/api/**").authenticated()
+                                                .requestMatchers("/admin/**").hasAuthority( "ADMIN" )
+                                                .anyRequest().permitAll())
                                 .sessionManagement(management -> management
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)

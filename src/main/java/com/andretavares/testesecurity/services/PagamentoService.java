@@ -6,7 +6,6 @@ import com.andretavares.testesecurity.dto.PagamentoRequest;
 import com.andretavares.testesecurity.dto.PaymentDTO;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
-import com.mercadopago.net.MPResultsResourcesPage;
 import com.mercadopago.resources.payment.Payment;
 
 public interface PagamentoService {

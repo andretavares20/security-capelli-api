@@ -1,11 +1,10 @@
 package com.andretavares.testesecurity.controllers;
 
-import java.util.List;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,11 +29,7 @@ public class UsuarioController{
     @Autowired
     private UserService userService;
 
-    @Operation(summary  = "Retorna todos os usuários do sistema.")
-    @GetMapping()
-    public ResponseEntity<List<User>> findAll(){
-        return ResponseEntity.ok().body(userService.findAll());
-    }
+    private static final Logger logger = LoggerFactory.getLogger(UsuarioController.class);
 
     @Operation(summary  = "Retorna usuário pelo id.", description  = "Você precisa enviar o id do usuário.")
     @GetMapping("/{id}")
@@ -49,12 +44,6 @@ public class UsuarioController{
     @PutMapping()
     public ResponseEntity<User> edit(@RequestBody UserDto userDto){
         return ResponseEntity.ok().body(userService.edit(userDto));
-    }
-
-    @Operation(summary  = "Deleta usuário pelo id.", description  = "Você precisa enviar o id do usuário.")
-    @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable("id") Long id){
-        userService.deleteById(id);
     }
 
     @Operation(summary  = "Cria um usuário do google", description  = "Envie para esse endpoint o json de resposta da api de login do Google.")

@@ -1,12 +1,8 @@
 package com.andretavares.testesecurity.controllers;
 
-import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,9 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.andretavares.testesecurity.dto.CarrinhoRequest;
 import com.andretavares.testesecurity.entities.Carrinho;
-import com.andretavares.testesecurity.entities.Produto;
 import com.andretavares.testesecurity.services.CarrinhoService;
-import com.andretavares.testesecurity.services.impl.UserDetailsImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
 
