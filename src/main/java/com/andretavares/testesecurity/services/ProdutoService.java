@@ -8,9 +8,11 @@ import java.util.Optional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.andretavares.testesecurity.dto.ProdutoDto;
 import com.andretavares.testesecurity.dto.UploadFileResponse;
@@ -91,12 +93,18 @@ public class ProdutoService {
 
         Produto produtoCor = produtoRepository.findByCorId(produtoDto.getCorId());
 
-        if(produtoCor==null){
 
+        try {
+            
             return produtoRepository.save(produto);
-        }else{
-            throw new BadRequestException("Já existe um produto com esta cor");
+        } catch (Exception e) {
+            // TODO: handle exception
+            throw new ResponseStatusException(
+           HttpStatus.BAD_REQUEST, "Já existe um produto com esta cor",e);
         }
+
+            // throw new BadRequestException("Já existe um produto com esta cor");
+
 
     }
 
@@ -133,12 +141,13 @@ public class ProdutoService {
 
             for (MultipartFile file : files) {
                 UploadFileResponse response = fileService.uploadFile(file, S3_BUCKET_NAME_ARQUIVOS);
-                if (response.getFileName()!=""){
-                    arquivos.add(new Arquivo(response.getFileName(), response.getFileDownloadUri()+"/"+response.getFileName(),file.getOriginalFilename(), produto));
+                if (response.getFileName() != "") {
+                    arquivos.add(new Arquivo(response.getFileName(),
+                            response.getFileDownloadUri() + "/" + response.getFileName(), file.getOriginalFilename(),
+                            produto));
                 }
             }
             produto.setArquivos(arquivos);
-
 
             return produtoRepository.save(produto);
         }
@@ -173,13 +182,13 @@ public class ProdutoService {
         produtoRepository.deleteById(id);
     }
 
-    public List<Produto> listaProdutosPorCategoria(Long categoriaId){
-        
+    public List<Produto> listaProdutosPorCategoria(Long categoriaId) {
+
         List<Cor> listCor = corRepository.findAllByCategoriaId(categoriaId);
 
         List<Produto> listProduto = new ArrayList();
 
-        for (Cor cor:listCor){
+        for (Cor cor : listCor) {
             Produto produto = produtoRepository.findByCorId(cor.getId());
             listProduto.add(produto);
         }
