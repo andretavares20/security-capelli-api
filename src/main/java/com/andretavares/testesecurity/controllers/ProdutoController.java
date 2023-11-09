@@ -14,7 +14,7 @@ import com.andretavares.testesecurity.services.ProdutoService;
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
-@RequestMapping("/api/produto")
+@RequestMapping("/client/produto")
 public class ProdutoController {
 
     @Autowired
