@@ -30,10 +30,13 @@ public class CarrinhoService {
     private UserRepository userRepository;
 
     @Transactional
-    public Carrinho addCarrinho(Long idUser,Long produtoId,Long quantidade){
+    public Carrinho addCarrinho(Long idUser,Long produtoId,Long quantidade,String tamanho,String tecnica,String volume){
 
         Produto produto = produtoRepository.findById(produtoId)
             .orElseThrow(() -> new BadRequestException("Produto de id "+produtoId+" não encontrado"));
+        produto.setTamanho(tamanho);
+        produto.setTecnica(tecnica);
+        produto.setVolume(volume);
 
         Optional<Carrinho> optionalCarrinho = carrinhoRepository.findByUserIdAndProdutoId(idUser,produtoId);
         Carrinho carrinho;

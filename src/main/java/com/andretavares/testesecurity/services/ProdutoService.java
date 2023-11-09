@@ -89,7 +89,15 @@ public class ProdutoService {
         Produto produto = new Produto(produtoDto.getName(), produtoDto.getDescription(),
                 categoria, cor, produtoDto.getPrice(), produtoDto.getEstoque());
 
-        return produtoRepository.save(produto);
+        Produto produtoCor = produtoRepository.findByCorId(produtoDto.getCorId());
+
+        if(produtoCor==null){
+
+            return produtoRepository.save(produto);
+        }else{
+            throw new BadRequestException("Já existe um produto com esta cor");
+        }
+
     }
 
     public Produto addImagens(Long idProduto, List<MultipartFile> files) throws IOException {
@@ -163,6 +171,20 @@ public class ProdutoService {
         }
 
         produtoRepository.deleteById(id);
+    }
+
+    public List<Produto> listaProdutosPorCategoria(Long categoriaId){
+        
+        List<Cor> listCor = corRepository.findAllByCategoriaId(categoriaId);
+
+        List<Produto> listProduto = new ArrayList();
+
+        for (Cor cor:listCor){
+            Produto produto = produtoRepository.findByCorId(cor.getId());
+            listProduto.add(produto);
+        }
+        return listProduto;
+
     }
 
 }

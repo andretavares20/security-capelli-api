@@ -30,6 +30,9 @@ public class Produto implements Serializable {
     private String description;
     private BigDecimal price;
     private Long estoque;
+    private String tamanho;
+    private String volume;
+    private String tecnica;
 
     @OneToOne()
     @JoinColumn(name = "cor_id", referencedColumnName = "id")

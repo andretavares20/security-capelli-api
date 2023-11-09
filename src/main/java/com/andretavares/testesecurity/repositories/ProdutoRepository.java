@@ -6,4 +6,6 @@ import com.andretavares.testesecurity.entities.Produto;
 
 public interface ProdutoRepository extends JpaRepository<Produto,Long>{
     
+    Produto findByCorId(Long corId);
+
 }

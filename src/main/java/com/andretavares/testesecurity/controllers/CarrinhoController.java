@@ -39,7 +39,7 @@ public class CarrinhoController {
     public Carrinho create(@PathVariable Long idUser,
             @RequestBody CarrinhoRequest carrinhoRequest) {
         return carrinhoService.addCarrinho(idUser,carrinhoRequest.getProdutoId() ,
-                carrinhoRequest.getQuantidade());
+                carrinhoRequest.getQuantidade(),carrinhoRequest.getTamanho(),carrinhoRequest.getTecnica(),carrinhoRequest.getVolume());
     }
 
     @Operation(summary  = "Atualiza a quantidade de um produto em um carrinho", description  = "Envie para esse endpoint o id do usuario, o id do produto e a quantidade que deseja.")
