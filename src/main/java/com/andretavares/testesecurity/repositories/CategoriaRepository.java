@@ -6,6 +6,6 @@ import com.andretavares.testesecurity.entities.Categoria;
 
 public interface CategoriaRepository extends JpaRepository<Categoria,Long>{
 
-    
+    Categoria findByNome(String nome);
     
 }

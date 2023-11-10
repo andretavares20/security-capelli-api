@@ -32,4 +32,9 @@ public class CategoriaController {
         return categoriaService.findById(id);
     }
 
+    @GetMapping("buscar-por-nome/categoria/{nome}")
+    public Categoria findByNome(@PathVariable("nome") String nome){
+        return categoriaService.findByNome(nome);
+    }
+
 }
