@@ -37,11 +37,20 @@ public class ProdutoController {
         return produtoService.findById(id);
     }
 
-    @GetMapping("lista-produtos-por-categoria/{categoriaId}")
-    public ResponseEntity<List<Produto>> listaProdutosPorCategoria(@PathVariable("categoriaId") Long categoriaId){
+    @GetMapping("lista-produtos-por-categoriaId/{categoriaId}")
+    public ResponseEntity<List<Produto>> listaProdutosPorCategoriaId(@PathVariable("categoriaId") Long categoriaId){
 
-        return ResponseEntity.ok().body(produtoService.listaProdutosPorCategoria(categoriaId));
+        return ResponseEntity.ok().body(produtoService.listaProdutosPorCategoriaId(categoriaId));
 
     }
+
+    @GetMapping("lista-produtos-por-nomeCategoria/{nomeCategoria}")
+    public ResponseEntity<List<Produto>> listaProdutosPorCategoriaNome(@PathVariable("nomeCategoria") String nomeCategoria){
+
+        return ResponseEntity.ok().body(produtoService.listaProdutosPorCategoriaNome(nomeCategoria));
+
+    }
+
+
 
 }

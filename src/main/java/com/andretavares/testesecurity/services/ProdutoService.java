@@ -182,9 +182,25 @@ public class ProdutoService {
         produtoRepository.deleteById(id);
     }
 
-    public List<Produto> listaProdutosPorCategoria(Long categoriaId) {
+    public List<Produto> listaProdutosPorCategoriaId(Long categoriaId) {
 
         List<Cor> listCor = corRepository.findAllByCategoriaId(categoriaId);
+
+        List<Produto> listProduto = new ArrayList();
+
+        for (Cor cor : listCor) {
+            Produto produto = produtoRepository.findByCorId(cor.getId());
+            listProduto.add(produto);
+        }
+        return listProduto;
+
+    }
+
+    public List<Produto> listaProdutosPorCategoriaNome(String nomeCategoria) {
+
+        Categoria categoria = categoriaRepository.findByNome(nomeCategoria);
+
+        List<Cor> listCor = corRepository.findAllByCategoriaId(categoria.getId());
 
         List<Produto> listProduto = new ArrayList();
 
