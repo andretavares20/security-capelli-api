@@ -29,4 +29,16 @@ public class Carrinho implements Serializable{
     private BigDecimal preco;
     private BigDecimal quantia;
     private LocalDateTime dataCriacao;
+
+    @ManyToOne
+    @JoinColumn(name = "tecnica_id")
+    private Tecnica tecnica;
+
+    @ManyToOne
+    @JoinColumn(name = "tamanho_id")
+    private Tamanho tamanho;
+
+    @ManyToOne
+    @JoinColumn(name = "volume_id")
+    private Volume volume;
 }

@@ -1,5 +1,6 @@
 package com.andretavares.testesecurity.controllers;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.andretavares.testesecurity.entities.Produto;
 import com.andretavares.testesecurity.repositories.CorRepository;
@@ -48,6 +50,13 @@ public class ProdutoController {
     public ResponseEntity<List<Produto>> listaProdutosPorCategoriaNome(@PathVariable("nomeCategoria") String nomeCategoria){
 
         return ResponseEntity.ok().body(produtoService.listaProdutosPorCategoriaNome(nomeCategoria));
+
+    }
+
+    @GetMapping("lista-imagens-produto/{produtoId}")
+    public ResponseEntity<List<MultipartFile>> listaImagensProduto(@PathVariable("produtoId") Long produtoId) throws IOException{
+
+        return ResponseEntity.ok().body(produtoService.listaImagensProduto(produtoId));
 
     }
 

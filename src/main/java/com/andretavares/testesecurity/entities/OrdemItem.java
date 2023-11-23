@@ -28,4 +28,17 @@ public class OrdemItem implements Serializable{
     private Long quantidade;
     private BigDecimal preço;
     private BigDecimal quantia;
+
+    @ManyToOne
+    @JoinColumn(name = "tecnica_id")
+    private Tecnica tecnica;
+
+    @ManyToOne
+    @JoinColumn(name = "tamanho_id")
+    private Tamanho tamanho;
+
+    @ManyToOne
+    @JoinColumn(name = "volume_id")
+    private Volume volume;  
+
 }

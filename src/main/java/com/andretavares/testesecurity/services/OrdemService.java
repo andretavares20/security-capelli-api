@@ -18,7 +18,10 @@ import com.andretavares.testesecurity.dto.OrdemResponse;
 import com.andretavares.testesecurity.entities.Ordem;
 import com.andretavares.testesecurity.entities.OrdemItem;
 import com.andretavares.testesecurity.entities.Produto;
+import com.andretavares.testesecurity.entities.Tamanho;
+import com.andretavares.testesecurity.entities.Tecnica;
 import com.andretavares.testesecurity.entities.User;
+import com.andretavares.testesecurity.entities.Volume;
 import com.andretavares.testesecurity.enums.StatusOrdem;
 import com.andretavares.testesecurity.exceptions.ApiRequestException;
 import com.andretavares.testesecurity.exceptions.BadRequestException;
@@ -26,7 +29,10 @@ import com.andretavares.testesecurity.exceptions.ResourceNotFoundException;
 import com.andretavares.testesecurity.repositories.OrdemItemRepository;
 import com.andretavares.testesecurity.repositories.OrdemRepository;
 import com.andretavares.testesecurity.repositories.ProdutoRepository;
+import com.andretavares.testesecurity.repositories.TamanhoRepository;
+import com.andretavares.testesecurity.repositories.TecnicaRepository;
 import com.andretavares.testesecurity.repositories.UserRepository;
+import com.andretavares.testesecurity.repositories.VolumeRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.Data;
@@ -52,6 +58,15 @@ public class OrdemService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TamanhoRepository tamanhoRepository;
+
+    @Autowired
+    private TecnicaRepository tecnicaRepository;
+
+    @Autowired
+    private VolumeRepository volumeRepository;
 
     @Transactional
     public OrdemResponse create(Long idUser, OrdemRequest request) {
@@ -80,6 +95,28 @@ public class OrdemService {
             ordemItem.setPreço(produto.getPrice());
             ordemItem.setQuantia(new BigDecimal(ordemItem.getPreço().doubleValue() * ordemItem.getQuantidade()));
             ordemItem.setOrdem(ordem);
+
+            Long tamanhoId = k.getTamanhoId();
+            Long tecnicaId = k.getTecnicaId();
+            Long volumeId = k.getVolumeId();
+
+            
+
+            Optional<Tecnica> optionalTecnica = tecnicaRepository.findById(tecnicaId);
+            if(optionalTecnica.isPresent()){
+                ordemItem.setTecnica(optionalTecnica.get());
+            }
+
+            Optional<Tamanho> optionalTamanho = tamanhoRepository.findById(tamanhoId);
+            if(optionalTamanho.isPresent()){
+                ordemItem.setTamanho(optionalTamanho.get());
+            }
+
+            Optional<Volume> optionalVolume = volumeRepository.findById(volumeId);
+            if(optionalVolume.isPresent()){
+                ordemItem.setVolume(optionalVolume.get());
+            }
+
             items.add(ordemItem);
 
         }

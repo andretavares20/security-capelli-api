@@ -1,5 +1,6 @@
 package com.andretavares.testesecurity.services;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ import com.andretavares.testesecurity.entities.OrdemItem;
 import com.andretavares.testesecurity.entities.Produto;
 import com.andretavares.testesecurity.exceptions.BadRequestException;
 import com.andretavares.testesecurity.exceptions.ResourceNotFoundException;
+import com.andretavares.testesecurity.repositories.ArquivoRepository;
 import com.andretavares.testesecurity.repositories.CategoriaRepository;
 import com.andretavares.testesecurity.repositories.CorRepository;
 import com.andretavares.testesecurity.repositories.OrdemItemRepository;
@@ -53,6 +55,9 @@ public class ProdutoService {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private ArquivoRepository arquivoRepository;
 
     @Value("${s3.bucket-name.arquivos}")
     private String S3_BUCKET_NAME_ARQUIVOS;
@@ -209,6 +214,27 @@ public class ProdutoService {
             listProduto.add(produto);
         }
         return listProduto;
+
+    }
+
+    public List<MultipartFile> listaImagensProduto(Long produtoId) throws IOException {
+        List<Arquivo> listArquivo = arquivoRepository.findAllByProdutoId(produtoId);
+
+        for(Arquivo arquivo:listArquivo){
+            FileOutputStream uploadFileResponse = fileService.downloadObject(S3_BUCKET_NAME_ARQUIVOS, arquivo.getNome());
+        }
+
+        // Categoria categoria = categoriaRepository.findByNome(nomeCategoria);
+
+        // List<Cor> listCor = corRepository.findAllByCategoriaId(categoria.getId());
+
+        // List<Produto> listProduto = new ArrayList();
+
+        // for (Cor cor : listCor) {
+        //     Produto produto = produtoRepository.findByCorId(cor.getId());
+        //     listProduto.add(produto);
+        // }
+        return null;
 
     }
 

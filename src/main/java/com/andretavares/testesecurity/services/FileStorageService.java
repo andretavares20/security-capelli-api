@@ -1,5 +1,7 @@
 package com.andretavares.testesecurity.services;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -16,6 +18,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.model.PutObjectResult;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.andretavares.testesecurity.FileStorageProperties;
 import com.andretavares.testesecurity.exceptions.FileNotFoundException;
 import com.andretavares.testesecurity.exceptions.FileStorageException;
@@ -50,11 +54,30 @@ public class FileStorageService {
         Path targetLocation = this.fileStorageLocation.resolve(fileName);
         Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-        PutObjectResult putObjectResult = amazonService.putObject(filenameExtension, bucketName, fileName, targetLocation);
-        if(putObjectResult==null){
+        PutObjectResult putObjectResult = amazonService.putObject(filenameExtension, bucketName, fileName,
+                targetLocation);
+        if (putObjectResult == null) {
             return "";
         }
         return fileName;
+    }
+
+    public FileOutputStream downloadObject(String bucketName, String keyName) throws IOException {
+
+        S3Object s3Object = amazonService.getObject(bucketName, keyName);
+        S3ObjectInputStream s3is = s3Object.getObjectContent();
+        FileOutputStream fos = new FileOutputStream(new File(keyName));
+        byte[] read_buf = new byte[1024];
+        int read_len = 0;
+        while ((read_len = s3is.read(read_buf)) > 0) {
+            fos.write(read_buf, 0, read_len);
+        }
+        s3is.close();
+        fos.close();
+        if (s3Object == null) {
+            return null;
+        }
+        return fos;
     }
 
     public Resource loadFileAsResource(String fileName) {

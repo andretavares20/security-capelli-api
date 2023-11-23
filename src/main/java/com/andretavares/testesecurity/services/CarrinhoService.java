@@ -9,11 +9,17 @@ import org.springframework.stereotype.Service;
 
 import com.andretavares.testesecurity.entities.Carrinho;
 import com.andretavares.testesecurity.entities.Produto;
+import com.andretavares.testesecurity.entities.Tamanho;
+import com.andretavares.testesecurity.entities.Tecnica;
 import com.andretavares.testesecurity.entities.User;
+import com.andretavares.testesecurity.entities.Volume;
 import com.andretavares.testesecurity.exceptions.BadRequestException;
 import com.andretavares.testesecurity.repositories.CarrinhoRepository;
 import com.andretavares.testesecurity.repositories.ProdutoRepository;
+import com.andretavares.testesecurity.repositories.TamanhoRepository;
+import com.andretavares.testesecurity.repositories.TecnicaRepository;
 import com.andretavares.testesecurity.repositories.UserRepository;
+import com.andretavares.testesecurity.repositories.VolumeRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -29,14 +35,23 @@ public class CarrinhoService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private TamanhoRepository tamanhoRepository;
+
+    @Autowired
+    private TecnicaRepository tecnicaRepository;
+
+    @Autowired
+    private VolumeRepository volumeRepository;
+
     @Transactional
-    public Carrinho addCarrinho(Long idUser,Long produtoId,Long quantidade,String tamanho,String tecnica,String volume){
+    public Carrinho addCarrinho(Long idUser,Long produtoId,Long quantidade,Long tamanhoId,Long tecnicaId,Long volumeId){
 
         Produto produto = produtoRepository.findById(produtoId)
             .orElseThrow(() -> new BadRequestException("Produto de id "+produtoId+" não encontrado"));
-        produto.setTamanho(tamanho);
-        produto.setTecnica(tecnica);
-        produto.setVolume(volume);
+        // produto.setTamanho(tamanho);
+        // produto.setTecnica(tecnica);
+        // produto.setVolume(volume);
 
         Optional<Carrinho> optionalCarrinho = carrinhoRepository.findByUserIdAndProdutoId(idUser,produtoId);
         Carrinho carrinho;
@@ -44,6 +59,22 @@ public class CarrinhoService {
             carrinho = optionalCarrinho.get();
             carrinho.setQuantidade(carrinho.getQuantidade()+quantidade);
             carrinho.setQuantia(new BigDecimal(carrinho.getPreco().doubleValue()*carrinho.getQuantidade()));
+
+            Optional<Tecnica> optionalTecnica = tecnicaRepository.findById(tecnicaId);
+            if(optionalTecnica.isPresent()){
+                carrinho.setTecnica(optionalTecnica.get());
+            }
+
+            Optional<Tamanho> optionalTamanho = tamanhoRepository.findById(tamanhoId);
+            if(optionalTamanho.isPresent()){
+                carrinho.setTamanho(optionalTamanho.get());
+            }
+
+            Optional<Volume> optionalVolume = volumeRepository.findById(volumeId);
+            if(optionalVolume.isPresent()){
+                carrinho.setVolume(optionalVolume.get());
+            }
+
             carrinhoRepository.save(carrinho);
         }else{
             carrinho = new Carrinho();
@@ -52,6 +83,22 @@ public class CarrinhoService {
             carrinho.setPreco(produto.getPrice());
             carrinho.setQuantia(new BigDecimal(carrinho.getPreco().doubleValue()*carrinho.getQuantidade()));
             carrinho.setUser(new User(idUser));
+
+            Optional<Tecnica> optionalTecnica = tecnicaRepository.findById(tecnicaId);
+            if(optionalTecnica.isPresent()){
+                carrinho.setTecnica(optionalTecnica.get());
+            }
+
+            Optional<Tamanho> optionalTamanho = tamanhoRepository.findById(tamanhoId);
+            if(optionalTamanho.isPresent()){
+                carrinho.setTamanho(optionalTamanho.get());
+            }
+
+            Optional<Volume> optionalVolume = volumeRepository.findById(volumeId);
+            if(optionalVolume.isPresent()){
+                carrinho.setVolume(optionalVolume.get());
+            }
+
             carrinhoRepository.save(carrinho);
         }
 
