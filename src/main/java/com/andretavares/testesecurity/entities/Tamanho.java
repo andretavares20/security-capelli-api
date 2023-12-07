@@ -35,5 +35,11 @@ public class Tamanho implements Serializable{
 
     @OneToMany(mappedBy = "tamanho")
     private List<OrdemItem> ordemItems;
+
+    public Tamanho(String cm) {
+        this.cm = cm;
+    }
+
+    
     
 }

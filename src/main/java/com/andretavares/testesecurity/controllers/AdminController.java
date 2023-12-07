@@ -27,12 +27,18 @@ import com.andretavares.testesecurity.entities.Categoria;
 import com.andretavares.testesecurity.entities.Cor;
 import com.andretavares.testesecurity.entities.Ordem;
 import com.andretavares.testesecurity.entities.Produto;
+import com.andretavares.testesecurity.entities.Tamanho;
+import com.andretavares.testesecurity.entities.Tecnica;
 import com.andretavares.testesecurity.entities.User;
+import com.andretavares.testesecurity.entities.Volume;
 import com.andretavares.testesecurity.services.CategoriaService;
 import com.andretavares.testesecurity.services.CorService;
 import com.andretavares.testesecurity.services.OrdemService;
 import com.andretavares.testesecurity.services.ProdutoService;
+import com.andretavares.testesecurity.services.TamanhoService;
+import com.andretavares.testesecurity.services.TecnicaService;
 import com.andretavares.testesecurity.services.UserService;
+import com.andretavares.testesecurity.services.VolumeService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +62,15 @@ public class AdminController {
 
     @Autowired
     private CorService corService;
+
+    @Autowired
+    private TamanhoService tamanhoService;
+
+    @Autowired
+    private TecnicaService tecnicaService;
+
+    @Autowired
+    private VolumeService volumeService;
 
     @Operation(summary = "Cria um produto", description = "Envie para esse endpoint o JSON contendo os dados do produto e imagens")
     @PostMapping("/produto")
@@ -193,6 +208,21 @@ public class AdminController {
 
         return ResponseEntity.ok().body(corService.postCor(corDto));
 
+    }
+
+    @PostMapping("/tamanho")
+    public ResponseEntity<Tamanho> postTamanho(@RequestParam String cm){
+        return ResponseEntity.ok().body(tamanhoService.postTamanho(cm));
+    }
+
+    @PostMapping("/tecnica")
+    public ResponseEntity<Tecnica> postTecnica(@RequestParam String nome){
+        return ResponseEntity.ok().body(tecnicaService.postTecnica(nome));
+    }
+
+    @PostMapping("/volume")
+    public ResponseEntity<Volume> postVolume(@RequestParam String gramas){
+        return ResponseEntity.ok().body(volumeService.postVolume(gramas));
     }
 
     // @PostMapping("/user")

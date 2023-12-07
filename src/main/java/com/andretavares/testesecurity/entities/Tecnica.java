@@ -36,4 +36,10 @@ public class Tecnica implements Serializable {
     @OneToMany(mappedBy = "tecnica")
     private List<OrdemItem> ordemItems;
 
+    public Tecnica(String nome) {
+        this.nome = nome;
+    }
+
+    
+
 }

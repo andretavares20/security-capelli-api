@@ -36,4 +36,10 @@ public class Volume implements Serializable{
     @OneToMany(mappedBy = "volume")
     private List<OrdemItem> ordemItems;
 
+    public Volume(String gramas) {
+        this.gramas = gramas;
+    }
+
+    
+
 }
