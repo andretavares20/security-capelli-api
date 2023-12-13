@@ -26,6 +26,7 @@ public class Cor {
     @JsonIgnore
     private Produto produto;
 
+    @JsonIgnore
     @ManyToOne
     private Categoria categoria;
 

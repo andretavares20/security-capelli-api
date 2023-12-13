@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,9 +32,11 @@ public class Volume implements Serializable{
     @ManyToMany(mappedBy = "volumes")
     private Set<Produto> produtos = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "volume")
     private List<Carrinho> carrinhos;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "volume")
     private List<OrdemItem> ordemItems;
 

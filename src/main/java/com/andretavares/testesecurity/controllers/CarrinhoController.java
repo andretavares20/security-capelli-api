@@ -70,4 +70,10 @@ public class CarrinhoController {
         carrinhoService.delete(idUser, Long.parseLong(produtoId));
     }
 
+    @Operation(summary = "Remove todos os produtos de um carrinho", description = "Envie para esse endpoint o id do usuario.")
+    @DeleteMapping("/carrinhos/{idUser}")
+    public void delete(@PathVariable Long idUser) {
+        carrinhoService.deleteAll(idUser);
+    }
+
 }
