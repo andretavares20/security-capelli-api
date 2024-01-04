@@ -29,6 +29,7 @@ public class Tecnica implements Serializable {
 
     private String nome;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "tecnicas")
     private Set<Produto> produtos = new HashSet<>();
 

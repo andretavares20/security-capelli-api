@@ -29,6 +29,7 @@ public class Volume implements Serializable{
 
     private String gramas;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "volumes")
     private Set<Produto> produtos = new HashSet<>();
 

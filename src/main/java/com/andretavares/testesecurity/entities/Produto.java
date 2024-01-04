@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,7 +29,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Produto implements Serializable {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,29 +37,20 @@ public class Produto implements Serializable {
     private String description;
     private BigDecimal price;
     private Long estoque;
-    
+
+    @JsonIgnore
     @ManyToMany
-    @JoinTable(
-        name = "produto_tamanho",
-        joinColumns = @JoinColumn(name = "produto_id"),
-        inverseJoinColumns = @JoinColumn(name = "tamanho_id")
-    )
+    @JoinTable(name = "produto_tamanho", joinColumns = @JoinColumn(name = "produto_id"), inverseJoinColumns = @JoinColumn(name = "tamanho_id"))
     private Set<Tamanho> tamanhos = new HashSet<>();
 
+    @JsonIgnore
     @ManyToMany
-    @JoinTable(
-        name = "produto_volume",
-        joinColumns = @JoinColumn(name = "produto_id"),
-        inverseJoinColumns = @JoinColumn(name = "volume_id")
-    )
+    @JoinTable(name = "produto_volume", joinColumns = @JoinColumn(name = "produto_id"), inverseJoinColumns = @JoinColumn(name = "volume_id"))
     private Set<Volume> volumes = new HashSet<>();
 
+    @JsonIgnore
     @ManyToMany
-    @JoinTable(
-        name = "produto_tecnica",
-        joinColumns = @JoinColumn(name = "produto_id"),
-        inverseJoinColumns = @JoinColumn(name = "tecnica_id")
-    )
+    @JoinTable(name = "produto_tecnica", joinColumns = @JoinColumn(name = "produto_id"), inverseJoinColumns = @JoinColumn(name = "tecnica_id"))
     private Set<Tecnica> tecnicas = new HashSet<>();
 
     @OneToOne()
@@ -75,8 +68,7 @@ public class Produto implements Serializable {
         this.price = price;
         this.estoque = estoque;
     }
-    
+
     // Getters e setters
 
-    
 }

@@ -29,6 +29,7 @@ public class Tamanho implements Serializable{
 
     private String cm;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "tamanhos")
     private Set<Produto> produtos = new HashSet<>();
 

@@ -1,6 +1,7 @@
 package com.andretavares.testesecurity.services;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,6 +102,8 @@ public class CarrinhoService {
             carrinho.setVolume(optionalVolume.get());
         }
 
+        carrinho.setDataCriacao(LocalDateTime.now());
+
         carrinhoRepository.save(carrinho);
         // }
 
@@ -148,6 +151,23 @@ public class CarrinhoService {
         }
 
         return null;
+    }
+
+    public double calculaValorTotal(Long id) {
+
+        Optional<User> optionalUser = userRepository.findById(id);
+
+        if (optionalUser.isPresent()) {
+            List<Carrinho> listCarrinho =  carrinhoRepository.findByUserId(optionalUser.get().getId());
+            double valorTotal = 0.00;
+            for(Carrinho carrinho:listCarrinho){
+
+                valorTotal = valorTotal+carrinho.getQuantia().doubleValue();
+            }
+            return valorTotal;
+        }
+
+        return 0.00;
     }
 
 }

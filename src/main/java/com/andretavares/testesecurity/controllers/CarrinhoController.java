@@ -1,5 +1,6 @@
 package com.andretavares.testesecurity.controllers;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,16 @@ public class CarrinhoController {
     public List<Carrinho> findByUserId(@PathVariable Long idUser) {
 
         return carrinhoService.findByUserId(idUser);
+
+    }
+
+    @Operation(summary = "Calcula valor total do carrinho do usuário", description = "Envie para esse endpoint o id do usuario")
+    @GetMapping("/carrinhos/calcula-valor-total/{idUser}")
+    public ResponseEntity<Double> calculaValorTotal(@PathVariable Long idUser) {
+
+        double valorTotal = carrinhoService.calculaValorTotal(idUser);
+
+        return ResponseEntity.ok().body(valorTotal);
 
     }
 
