@@ -25,7 +25,7 @@ public class Categoria {
 
     @OneToMany(mappedBy = "categoria")
     @JsonIgnore
-    private List<Cor> cores;
+    private List<Produto> produtos;
 
     public Categoria(String nome) {
         this.nome = nome;

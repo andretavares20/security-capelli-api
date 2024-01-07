@@ -12,7 +12,7 @@ public class ProdutoDto {
     
     private String name;
     private String description;
-    private Long corId;
+    private Long categoriaId;
     private BigDecimal price;
     private Long estoque;
 

@@ -22,9 +22,9 @@ public class Cor {
     private Long id;
     private String nome;
 
-    @OneToOne(mappedBy = "cor")
-    @JsonIgnore
-    private Produto produto;
+    // @OneToOne(mappedBy = "cor")
+    // @JsonIgnore
+    // private Produto produto;
 
     @JsonIgnore
     @ManyToOne

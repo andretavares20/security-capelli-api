@@ -77,26 +77,20 @@ public class ProdutoService {
             throw new BadRequestException("Produto informado esta sem nome");
         }
 
-        if (produtoDto.getCorId() == null) {
+        if (produtoDto.getCategoriaId() == null) {
             throw new BadRequestException("Produto informado esta sem cor");
         }
 
-        if (produtoDto.getCorId() == null) {
+        if (produtoDto.getCategoriaId() == null) {
             throw new BadRequestException("Cor informada esta sem id");
         }
 
-        Cor cor = corRepository.findById(produtoDto.getCorId())
+        Categoria categoria = categoriaRepository.findById(produtoDto.getCategoriaId())
                 .orElseThrow(() -> new BadRequestException(
-                        "Cor ID " + produtoDto.getCorId() + " não existe"));
-
-        Categoria categoria = categoriaRepository.findById(cor.getCategoria().getId())
-                .orElseThrow(() -> new BadRequestException(
-                        "Categoria ID " + cor.getCategoria().getId() + " não existe"));
+                        "Categoria ID " + produtoDto.getCategoriaId() + " não existe"));
 
         Produto produto = new Produto(produtoDto.getName(), produtoDto.getDescription(),
-                categoria, cor, produtoDto.getPrice(), produtoDto.getEstoque());
-
-        Produto produtoCor = produtoRepository.findByCorId(produtoDto.getCorId());
+                categoria, produtoDto.getPrice(), produtoDto.getEstoque());
 
 
         try {
@@ -126,17 +120,17 @@ public class ProdutoService {
                 throw new BadRequestException("Produto informado esta sem nome");
             }
 
-            if (produto.getCor() == null) {
-                throw new BadRequestException("Produto informado esta sem cor");
+            if (produto.getCategoria() == null) {
+                throw new BadRequestException("Produto informado não pertence a nenhuma categoria");
             }
 
-            if (produto.getCor().getId() == null) {
-                throw new BadRequestException("Cor informada esta sem id");
+            if (produto.getCategoria().getId() == null) {
+                throw new BadRequestException("Categorua informada esta sem id");
             }
 
-            Cor cor = corRepository.findById(produto.getCor().getId())
+            Cor cor = corRepository.findById(produto.getCategoria().getId())
                     .orElseThrow(() -> new BadRequestException(
-                            "Cor ID " + produto.getCor().getId() + " não existe"));
+                            "Cor ID " + produto.getCategoria().getId() + " não existe"));
 
             Categoria categoria = categoriaRepository.findById(cor.getCategoria().getId())
                     .orElseThrow(() -> new BadRequestException(
@@ -189,15 +183,23 @@ public class ProdutoService {
 
     public List<Produto> listaProdutosPorCategoriaId(Long categoriaId) {
 
-        List<Cor> listCor = corRepository.findAllByCategoriaId(categoriaId);
+        Optional<Categoria> optionalCategoria = categoriaRepository.findById(categoriaId);
 
-        List<Produto> listProduto = new ArrayList();
+        if(optionalCategoria.isPresent()){
 
-        for (Cor cor : listCor) {
-            Produto produto = produtoRepository.findByCorId(cor.getId());
-            listProduto.add(produto);
+            List<Produto> listProduto =  produtoRepository.findAllByCategoriaId(categoriaId);
+    
+            if(!listProduto.isEmpty()){
+    
+    
+                return listProduto;
+            }
+    
+            throw new BadRequestException("Não existem produtos para esta categoria Id");
         }
-        return listProduto;
+
+        throw new BadRequestException("Categoria não encontrada.");
+
 
     }
 
@@ -205,15 +207,20 @@ public class ProdutoService {
 
         Categoria categoria = categoriaRepository.findByNome(nomeCategoria);
 
-        List<Cor> listCor = corRepository.findAllByCategoriaId(categoria.getId());
+        if(categoria!=null){
 
-        List<Produto> listProduto = new ArrayList();
+            List<Produto> listProdutos =  produtoRepository.findAllByCategoriaId(categoria.getId());
 
-        for (Cor cor : listCor) {
-            Produto produto = produtoRepository.findByCorId(cor.getId());
-            listProduto.add(produto);
+            if(!listProdutos.isEmpty()){
+
+                return listProdutos;
+            }
+
+            throw new BadRequestException("Não existe produto nesta categoria");
+
         }
-        return listProduto;
+
+        throw new BadRequestException("Categoria não encontrada");
 
     }
 
