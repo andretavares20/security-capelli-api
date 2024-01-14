@@ -1,6 +1,7 @@
 package com.andretavares.testesecurity.services;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +70,7 @@ public class OrdemService {
     private VolumeRepository volumeRepository;
 
     @Transactional
-    public OrdemResponse create(Long idUser, OrdemRequest request) {
+    public OrdemResponse create(Long idUser, OrdemRequest request,Principal userLogged) {
         Ordem ordem = new Ordem();
         ordem.setData(LocalDateTime.now());
         ordem.setNumber(generateNumeroOrdem());
@@ -136,7 +137,7 @@ public class OrdemService {
             Produto produto = ordemItem.getProduto();
             produto.setEstoque(produto.getEstoque() - ordemItem.getQuantidade());
             produtoRepository.save(produto);
-            carrinhoService.delete(idUser, produto.getId());
+            carrinhoService.delete(idUser, produto.getId(),userLogged);
         }
 
         ordemLogService.createLog(idUser, ordem, 0, "Pedido feito com sucesso");

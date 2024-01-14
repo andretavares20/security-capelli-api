@@ -78,7 +78,7 @@ public class ProdutoService {
         }
 
         if (produtoDto.getCategoriaId() == null) {
-            throw new BadRequestException("Produto informado esta sem cor");
+            throw new BadRequestException("Produto informado esta sem categoria");
         }
 
         if (produtoDto.getCategoriaId() == null) {

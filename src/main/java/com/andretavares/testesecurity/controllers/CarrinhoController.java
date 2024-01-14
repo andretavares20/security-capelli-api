@@ -1,6 +1,6 @@
 package com.andretavares.testesecurity.controllers;
 
-import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +32,9 @@ public class CarrinhoController {
 
     @Operation(summary = "Retorna carrinho de usuário", description = "Envie para esse endpoint o id do usuario")
     @GetMapping("/carrinhos/{idUser}")
-    public List<Carrinho> findByUserId(@PathVariable Long idUser) {
+    public List<Carrinho> findByUserId(@PathVariable Long idUser, Principal userLogged) {
 
-        return carrinhoService.findByUserId(idUser);
+        return carrinhoService.findByUserId(idUser, userLogged);
 
     }
 
@@ -51,17 +51,17 @@ public class CarrinhoController {
     @Operation(summary = "Adiciona uma quantidade de um produto em um carrinho", description = "Envie para esse endpoint o id do usuario, e o corpo do carrinho contendo o id do produto e a quantidade")
     @PostMapping("/carrinhos/{idUser}")
     public ResponseEntity<Integer> create(@PathVariable Long idUser,
-            @RequestBody CarrinhoRequest carrinhoRequest) {
-                try {
-                    
-                    carrinhoService.addCarrinho(idUser, carrinhoRequest.getProdutoId(),
+            @RequestBody CarrinhoRequest carrinhoRequest, Principal userLogged) {
+        try {
+
+            carrinhoService.addCarrinho(idUser, carrinhoRequest.getProdutoId(),
                     carrinhoRequest.getQuantidade(), carrinhoRequest.getTamanhoId(), carrinhoRequest.getTecnicaId(),
-                    carrinhoRequest.getVolumeId());
-                    return ResponseEntity.ok().body(HttpStatus.CREATED); 
-                } catch (Exception e) {
-                    // TODO: handle exception
-                    throw new BadRequestException("Não foi possivel inserir produto no carro: "+e.toString()+"");
-                }
+                    carrinhoRequest.getVolumeId(),userLogged);
+            return ResponseEntity.ok().body(HttpStatus.CREATED);
+        } catch (Exception e) {
+            // TODO: handle exception
+            throw new BadRequestException("Não foi possivel inserir produto no carro: " + e.toString() + "");
+        }
 
     }
 
@@ -69,22 +69,23 @@ public class CarrinhoController {
     @PutMapping("/carrinhos/{produtoId}/{idUser}")
     public Carrinho update(@PathVariable Long idUser,
             @PathVariable("produtoId") String produtoId,
-            @RequestParam("quantidade") Long quantidade) {
+            @RequestParam("quantidade") Long quantidade,
+            Principal userLogged) {
 
-        return carrinhoService.updateQuantidade(idUser, Long.parseLong(produtoId), quantidade);
+        return carrinhoService.updateQuantidade(idUser, Long.parseLong(produtoId), quantidade, userLogged);
 
     }
 
     @Operation(summary = "Remove produto do carrinho", description = "Envie para esse endpoint o id do usuario, e o id do produto que deseja deletar.")
     @DeleteMapping("/carrinhos/{produtoId}/{idUser}")
-    public void delete(@PathVariable Long idUser, @PathVariable("produtoId") String produtoId) {
-        carrinhoService.delete(idUser, Long.parseLong(produtoId));
+    public void delete(@PathVariable Long idUser, @PathVariable("produtoId") String produtoId, Principal userLogged) {
+        carrinhoService.delete(idUser, Long.parseLong(produtoId), userLogged);
     }
 
     @Operation(summary = "Remove todos os produtos de um carrinho", description = "Envie para esse endpoint o id do usuario.")
     @DeleteMapping("/carrinhos/{idUser}")
-    public void delete(@PathVariable Long idUser) {
-        carrinhoService.deleteAll(idUser);
+    public void delete(@PathVariable Long idUser,Principal userLogged) {
+        carrinhoService.deleteAll(idUser,userLogged);
     }
 
 }

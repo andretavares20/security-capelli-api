@@ -1,6 +1,7 @@
 package com.andretavares.testesecurity.controllers;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,9 +118,9 @@ public class AdminController {
 
     @Operation(summary  = "Finaliza compra no carrinho e gera um ordem de compra em RASCUNHO", description  = "Envie para esse endpoint o id do usuário que ta realizando a compra, o json do objeto Ordem e os itens contendo o id do produto.")
     @PostMapping("/ordens")
-    public ResponseEntity<OrdemResponse> create(Long userId, @RequestBody OrdemRequest request) {
+    public ResponseEntity<OrdemResponse> create(Long userId, @RequestBody OrdemRequest request,Principal userLogged) {
 
-        return ResponseEntity.ok().body(ordemService.create(userId, request));
+        return ResponseEntity.ok().body(ordemService.create(userId, request,userLogged));
 
     }
 
