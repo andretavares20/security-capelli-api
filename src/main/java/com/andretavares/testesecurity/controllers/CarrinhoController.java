@@ -77,9 +77,9 @@ public class CarrinhoController {
     }
 
     @Operation(summary = "Remove produto do carrinho", description = "Envie para esse endpoint o id do usuario, e o id do produto que deseja deletar.")
-    @DeleteMapping("/carrinhos/{produtoId}/{idUser}")
-    public void delete(@PathVariable Long idUser, @PathVariable("produtoId") String produtoId, Principal userLogged) {
-        carrinhoService.delete(idUser, Long.parseLong(produtoId), userLogged);
+    @DeleteMapping("/carrinhos/{idCarrinho}/{idUser}")
+    public void delete(@PathVariable Long idUser, @PathVariable("idCarrinho") Long idCarrinho, Principal userLogged) {
+        carrinhoService.delete(idUser, idCarrinho, userLogged);
     }
 
     @Operation(summary = "Remove todos os produtos de um carrinho", description = "Envie para esse endpoint o id do usuario.")

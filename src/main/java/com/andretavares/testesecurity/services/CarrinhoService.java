@@ -128,7 +128,7 @@ public class CarrinhoService {
 
     }
 
-    public void delete(Long idUser, Long produtoId, Principal userLogged) {
+    public void delete(Long idUser, Long idCarrinho, Principal userLogged) {
 
         Optional<User> optionalUser = userRepository.findById(idUser);
 
@@ -144,9 +144,9 @@ public class CarrinhoService {
             
         }
 
-        Carrinho carrinho = carrinhoRepository.findByUserIdAndProdutoId(idUser, produtoId)
+        Carrinho carrinho = carrinhoRepository.findById(idCarrinho)
                 .orElseThrow(() -> new BadRequestException(
-                        "Produto Id " + produtoId + " não foi encontrado no seu carrinho"));
+                        "Carrinho Id " + idCarrinho + " não foi encontrado"));
 
         carrinhoRepository.delete(carrinho);
 
