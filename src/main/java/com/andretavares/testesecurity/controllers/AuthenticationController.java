@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.andretavares.testesecurity.dto.AuthenticationRequest;
 import com.andretavares.testesecurity.dto.AuthenticationResponse;
+import com.andretavares.testesecurity.dto.Token;
 import com.andretavares.testesecurity.dto.UserDto;
+import com.andretavares.testesecurity.dto.UserGoogleProviderDto;
 import com.andretavares.testesecurity.entities.User;
 import com.andretavares.testesecurity.repositories.UserRepository;
 import com.andretavares.testesecurity.services.UserService;
@@ -106,16 +108,29 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(userDto));
     }
 
-    // @PostMapping("/sign-up")
-    // public ResponseEntity<?> signupUser(@RequestBody SignupRequest signupRequest) {
+    @Operation(summary  = "Cria um usuário do google", description  = "Envie para esse endpoint o json de resposta da api de login do Google.")
+    @PostMapping("/google")
+    public ResponseEntity<?> addUserGoogle(@RequestBody UserGoogleProviderDto userGoogleProviderDto){
+        UserDto createdUserDto = userService.postUserGoogle(userGoogleProviderDto);
+        if(createdUserDto == null){
+            return new ResponseEntity<>("Something went wrong.",HttpStatus.BAD_REQUEST);
+        }else{
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdUserDto);
+        }
+    } 
 
-    //     if (authService.hasUserWithEmail(signupRequest.getEmail())) {
-    //         return new ResponseEntity<>("User already exists", HttpStatus.NOT_ACCEPTABLE);
-    //     }
+    @Operation(summary  = "Cria um usuário do facebook", description  = "Envie para esse endpoint o token de resposta da api de login do Facebook.")
+    @PostMapping("/facebook")
+    public ResponseEntity<?> loginWithFacebook(@RequestBody Token credential) {
+        try {
 
-    //     UserDto userDto = authService.createUser(signupRequest);
-    //     return new ResponseEntity<>(userDto, HttpStatus.OK);
+            User user = userService.postUserFacebook(credential.getToken());
 
-    // }
+            return ResponseEntity.ok().body(user);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
 }
