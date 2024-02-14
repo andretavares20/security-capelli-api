@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
@@ -77,7 +78,7 @@ public class UserService {
         List<Endereco> listEndereco = new ArrayList<>();
 
         List<Endereco> enderecos = userDto.getEnderecos();
-        for(Endereco endereco:enderecos){
+        for (Endereco endereco : enderecos) {
             endereco.setUser(userSaved);
             listEndereco.add(endereco);
         }
@@ -133,17 +134,23 @@ public class UserService {
                 .filter(user -> user.getSource() == RegistrationSource.GOOGLE)
                 .findFirst();
 
+        String fakePassword = "fakePassword";
+
         if (!userComSourceGoogle.isPresent()) {
+            String senhaCriptografada = new BCryptPasswordEncoder().encode(fakePassword);
+
             User user = new User();
             BeanUtils.copyProperties(userDto, user);
             user.setRole(UserRole.USER);
             user.setSource(RegistrationSource.GOOGLE);
             user.setIsActive(true);
+            user.setPassword(senhaCriptografada);
             User createdUser = userRepository.save(user);
             UserDto createdUserDto = new UserDto();
             createdUserDto.setId(createdUser.getId());
             createdUserDto.setEmail(createdUser.getEmail());
             createdUserDto.setRole(UserRole.USER);
+            createdUserDto.setPassword(senhaCriptografada);
             return createdUserDto;
         } else {
 
@@ -151,6 +158,7 @@ public class UserService {
             createdUserDto.setId(userComSourceGoogle.get().getId());
             createdUserDto.setEmail(userComSourceGoogle.get().getEmail());
             createdUserDto.setRole(UserRole.USER);
+            createdUserDto.setPassword(userComSourceGoogle.get().getPassword());
             return createdUserDto;
 
         }
@@ -191,6 +199,8 @@ public class UserService {
         if (userExist == null) {
 
             User user = facebookUserInfoToUser(userContentObj);
+            String fakePassword = "fakePassword";
+            user.setPassword(new BCryptPasswordEncoder().encode(fakePassword));
             userRepository.save(user);
             return user;
 

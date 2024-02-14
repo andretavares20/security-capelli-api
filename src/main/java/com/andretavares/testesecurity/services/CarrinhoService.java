@@ -48,7 +48,7 @@ public class CarrinhoService {
 
     @Transactional
     public Carrinho addCarrinho(Long idUser, Long produtoId, Long quantidade, Long tamanhoId, Long tecnicaId,
-            Long volumeId,Principal userLogged) {
+            Long volumeId, Principal userLogged) {
 
         Optional<User> optionalUser = userRepository.findById(idUser);
 
@@ -56,12 +56,12 @@ public class CarrinhoService {
 
             User user = optionalUser.get();
 
-            if(!user.getEmail().equals(userLogged.getName())){
+            if (!user.getEmail().equals(userLogged.getName())) {
 
                 System.out.println("Usuário que solicitou não é o mesmo que esta logado.");
                 throw new BadRequestException("Usuário que solicitou não é o mesmo que esta logado.");
             }
-            
+
         }
 
         Produto produto = produtoRepository.findById(produtoId)
@@ -108,12 +108,12 @@ public class CarrinhoService {
 
             User user = optionalUser.get();
 
-            if(!user.getEmail().equals(userLogged.getName())){
+            if (!user.getEmail().equals(userLogged.getName())) {
 
                 System.out.println("Usuário que solicitou não é o mesmo que esta logado.");
                 throw new BadRequestException("Usuário que solicitou não é o mesmo que esta logado.");
             }
-            
+
         }
 
         Carrinho carrinho = carrinhoRepository.findByUserIdAndProdutoId(idUser, produtoId)
@@ -125,10 +125,9 @@ public class CarrinhoService {
         carrinhoRepository.save(carrinho);
         return carrinho;
 
-
     }
 
-    public void delete(Long idUser, Long idCarrinho, Principal userLogged) {
+    public void delete(Long idUser, Long idProduto, Principal userLogged) {
 
         Optional<User> optionalUser = userRepository.findById(idUser);
 
@@ -136,23 +135,24 @@ public class CarrinhoService {
 
             User user = optionalUser.get();
 
-            if(!user.getEmail().equals(userLogged.getName())){
+            if (!user.getEmail().equals(userLogged.getName())) {
 
                 System.out.println("Usuário que solicitou não é o mesmo que esta logado.");
                 throw new BadRequestException("Usuário que solicitou não é o mesmo que esta logado.");
             }
-            
+
         }
 
-        Carrinho carrinho = carrinhoRepository.findById(idCarrinho)
-                .orElseThrow(() -> new BadRequestException(
-                        "Carrinho Id " + idCarrinho + " não foi encontrado"));
-
-        carrinhoRepository.delete(carrinho);
+        Optional<Carrinho> optionalCarrinho = carrinhoRepository.findByUserIdAndProdutoId(idUser, idProduto);
+        if (optionalCarrinho.isPresent()) {
+            Carrinho carrinho = optionalCarrinho
+                    .get();
+            carrinhoRepository.delete(carrinho);
+        }
 
     }
 
-    public void deleteAll(Long idUser,Principal userLogged) {
+    public void deleteAll(Long idUser, Principal userLogged) {
 
         Optional<User> optionalUser = userRepository.findById(idUser);
 
@@ -160,12 +160,12 @@ public class CarrinhoService {
 
             User user = optionalUser.get();
 
-            if(!user.getEmail().equals(userLogged.getName())){
+            if (!user.getEmail().equals(userLogged.getName())) {
 
                 System.out.println("Usuário que solicitou não é o mesmo que esta logado.");
                 throw new BadRequestException("Usuário que solicitou não é o mesmo que esta logado.");
             }
-            
+
         }
 
         List<Carrinho> listCarrinho = carrinhoRepository.findAllByUserId(idUser);
@@ -174,7 +174,7 @@ public class CarrinhoService {
 
     }
 
-    public List<Carrinho> findByUserId(Long id,Principal userLogged) {
+    public List<Carrinho> findByUserId(Long id, Principal userLogged) {
 
         Optional<User> optionalUser = userRepository.findById(id);
 
@@ -182,11 +182,11 @@ public class CarrinhoService {
 
             User user = optionalUser.get();
 
-            if(user.getEmail().equals(userLogged.getName())){
+            if (user.getEmail().equals(userLogged.getName())) {
 
-                List<Carrinho> listCarrinho =  carrinhoRepository.findByUserId(optionalUser.get().getId());
+                List<Carrinho> listCarrinho = carrinhoRepository.findByUserId(optionalUser.get().getId());
                 return listCarrinho;
-            }else{
+            } else {
                 System.out.println("Usuário que solicitou não é o mesmo que esta logado.");
                 throw new BadRequestException("Usuário que solicitou não é o mesmo que esta logado.");
             }
@@ -201,11 +201,11 @@ public class CarrinhoService {
         Optional<User> optionalUser = userRepository.findById(id);
 
         if (optionalUser.isPresent()) {
-            List<Carrinho> listCarrinho =  carrinhoRepository.findByUserId(optionalUser.get().getId());
+            List<Carrinho> listCarrinho = carrinhoRepository.findByUserId(optionalUser.get().getId());
             double valorTotal = 0.00;
-            for(Carrinho carrinho:listCarrinho){
+            for (Carrinho carrinho : listCarrinho) {
 
-                valorTotal = valorTotal+carrinho.getQuantia().doubleValue();
+                valorTotal = valorTotal + carrinho.getQuantia().doubleValue();
             }
             return valorTotal;
         }
