@@ -24,6 +24,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableMethodSecurity
@@ -44,11 +45,14 @@ public class WebSecurityConfiguration {
                                                 .disable())
                                 .authorizeHttpRequests(requests -> requests
                                                 .requestMatchers("/api/**").authenticated()
-                                                .requestMatchers("/admin/**").hasAuthority( "ADMIN" )
+                                                .requestMatchers("/admin/**").hasAuthority("ADMIN")
                                                 .requestMatchers("/client/**").permitAll()
                                                 .anyRequest().permitAll())
                                 .sessionManagement(management -> management
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .exceptionHandling(exceptionHandling -> exceptionHandling
+                                                .authenticationEntryPoint((request, response, authException) -> response
+                                                                .sendError(HttpServletResponse.SC_UNAUTHORIZED)))
                                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                                 .build();
 
