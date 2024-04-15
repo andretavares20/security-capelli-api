@@ -68,6 +68,22 @@ public class AvaliacaoService {
         return avaliacoesDTO;
     }
 
+    public List<AvaliacaoDTO> getAllAvaliacoesByProduto(Long idProduto) {
+        List<Avaliacao> avaliacoes = avaliacaoRepository.findAllByProdutoId(idProduto);
+        List<AvaliacaoDTO> avaliacoesDTO = new ArrayList<>();
+        for (Avaliacao avaliacao : avaliacoes) {
+            AvaliacaoDTO avaliacaoDTO = new AvaliacaoDTO();
+            avaliacaoDTO.setId(avaliacao.getId());
+            avaliacaoDTO.setIdProduto(avaliacao.getProduto().getId());
+            avaliacaoDTO.setIdUsuario(avaliacao.getUser().getId());
+            avaliacaoDTO.setRating(avaliacao.getRating());
+            avaliacaoDTO.setDescricao(avaliacao.getDescricao());
+            avaliacaoDTO.setTitulo(avaliacao.getTitulo());
+            avaliacoesDTO.add(avaliacaoDTO);
+        }
+        return avaliacoesDTO;
+    }
+
     // Método para obter uma avaliação por ID
     public Avaliacao getAvaliacaoById(Long id) {
         Optional<Avaliacao> optionalAvaliacao = avaliacaoRepository.findById(id);

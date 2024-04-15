@@ -72,4 +72,14 @@ public class AvaliacaoController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("/produto/{idProduto}")
+    public ResponseEntity<List<AvaliacaoDTO>> getAvaliacaoByProdutoId(@PathVariable("idProduto") Long idProduto) {
+        List<AvaliacaoDTO> listAvaliacaoDTOs = avaliacaoService.getAllAvaliacoesByProduto(idProduto);
+        if (listAvaliacaoDTOs != null) {
+            return new ResponseEntity<>(listAvaliacaoDTOs, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
