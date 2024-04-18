@@ -1,48 +1,48 @@
-package com.andretavares.testesecurity.controllers;
+// package com.andretavares.testesecurity.controllers;
 
-import java.util.List;
+// import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+// import org.springframework.http.ResponseEntity;
+// import org.springframework.web.bind.annotation.GetMapping;
+// import org.springframework.web.bind.annotation.PostMapping;
+// import org.springframework.web.bind.annotation.RequestBody;
+// import org.springframework.web.bind.annotation.RequestMapping;
+// import org.springframework.web.bind.annotation.RequestParam;
+// import org.springframework.web.bind.annotation.RestController;
 
-import com.andretavares.testesecurity.entities.Pedido;
+// import com.andretavares.testesecurity.entities.Pedido;
 
-@RestController
-@RequestMapping("/api/pedido")
-public class PedidoController {
+// @RestController
+// @RequestMapping("/api/pedido")
+// public class PedidoController {
     
-    @PostMapping
-    public Pedido postPedido(@RequestBody Pedido pedido){
+//     @PostMapping
+//     public Pedido postPedido(@RequestBody Pedido pedido){
 
-        return null;
+//         return null;
 
-    }
+//     }
 
-    @GetMapping
-    public Pedido getPedido(@RequestParam("pedidoId") Long pedidoId){
+//     @GetMapping
+//     public Pedido getPedido(@RequestParam("pedidoId") Long pedidoId){
 
-        return null;
+//         return null;
 
-    }
+//     }
 
-    @PostMapping("/cancelar-pedido")
-    public ResponseEntity<?> cancelaPedido(@RequestParam("pedidoId") Long pedidoId,
-        @RequestParam("usuarioId") Long usuarioId){
+//     @PostMapping("/cancelar-pedido")
+//     public ResponseEntity<?> cancelaPedido(@RequestParam("pedidoId") Long pedidoId,
+//         @RequestParam("usuarioId") Long usuarioId){
 
-            return null;
+//             return null;
 
-    }
+//     }
 
-    @GetMapping("/buscar-pedidos")
-    public List<Pedido> buscaListPedido(@RequestParam("usuarioId") Long usuarioId){
+//     @GetMapping("/buscar-pedidos")
+//     public List<Pedido> buscaListPedido(@RequestParam("usuarioId") Long usuarioId){
 
-        return null;
+//         return null;
 
-    }
+//     }
 
-}
+// }

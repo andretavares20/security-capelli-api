@@ -164,13 +164,23 @@ public class AdminController {
 
     }
 
-    @Operation(summary  = "Retorna todas as ordens existentes no banco de dados.")
-    @GetMapping("/ordens")
+    @Operation(summary  = "Retorna todas as ordens de um usuário")
+    @GetMapping("/user/ordens")
     public ResponseEntity<List<Ordem>> findAllOrdemUser(Long userId,
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "limit", defaultValue = "25", required = false) int limit) {
 
         return ResponseEntity.ok().body(ordemService.findAllOrdemUser(userId, page, limit));
+
+    }
+
+    @Operation(summary  = "Retorna todas as ordens do sistema")
+    @GetMapping("/ordens")
+    public ResponseEntity<List<Ordem>> findAllOrdem(
+            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(name = "limit", defaultValue = "25", required = false) int limit) {
+
+        return ResponseEntity.ok().body(ordemService.findAllOrdem(page, limit));
 
     }
 

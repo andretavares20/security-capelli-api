@@ -70,7 +70,7 @@ public class OrdemService {
     private VolumeRepository volumeRepository;
 
     @Transactional
-    public OrdemResponse create(Long idUser, OrdemRequest request,Principal userLogged) {
+    public OrdemResponse create(Long idUser, OrdemRequest request, Principal userLogged) {
         Ordem ordem = new Ordem();
         ordem.setData(LocalDateTime.now());
         ordem.setNumber(generateNumeroOrdem());
@@ -101,20 +101,18 @@ public class OrdemService {
             Long tecnicaId = k.getTecnicaId();
             Long volumeId = k.getVolumeId();
 
-            
-
             Optional<Tecnica> optionalTecnica = tecnicaRepository.findById(tecnicaId);
-            if(optionalTecnica.isPresent()){
+            if (optionalTecnica.isPresent()) {
                 ordemItem.setTecnica(optionalTecnica.get());
             }
 
             Optional<Tamanho> optionalTamanho = tamanhoRepository.findById(tamanhoId);
-            if(optionalTamanho.isPresent()){
+            if (optionalTamanho.isPresent()) {
                 ordemItem.setTamanho(optionalTamanho.get());
             }
 
             Optional<Volume> optionalVolume = volumeRepository.findById(volumeId);
-            if(optionalVolume.isPresent()){
+            if (optionalVolume.isPresent()) {
                 ordemItem.setVolume(optionalVolume.get());
             }
 
@@ -137,13 +135,13 @@ public class OrdemService {
             Produto produto = ordemItem.getProduto();
             produto.setEstoque(produto.getEstoque() - ordemItem.getQuantidade());
             produtoRepository.save(produto);
-            carrinhoService.delete(idUser, produto.getId(),userLogged);
+            carrinhoService.delete(idUser, produto.getId(), userLogged);
         }
 
         ordemLogService.createLog(idUser, ordem, 0, "Pedido feito com sucesso");
 
         Optional<User> optionalUser = userRepository.findById(saved.getUser().getId());
-        if (!optionalUser.isPresent()){
+        if (!optionalUser.isPresent()) {
             throw new BadRequestException("Usuario não encontrado");
         }
 
@@ -196,6 +194,13 @@ public class OrdemService {
 
     public List<Ordem> findAllOrdemUser(Long userId, int page, int limit) {
         return ordemRepository.findByUserId(userId, PageRequest.of(page, limit, Sort.by("horaMensagem").descending()));
+    }
+
+    public List<Ordem> findAllOrdem(int page, int limit) {
+        List<Ordem> ordens = ordemRepository.findAll();
+        // Formatar todos os totais usando expressões lambda e stream
+        ordens.forEach(ordem -> ordem.setTotalStr(ordem.getFormattedTotal()));
+        return ordens;
     }
 
     public List<Ordem> search(String filterText, int page, int limit) {
