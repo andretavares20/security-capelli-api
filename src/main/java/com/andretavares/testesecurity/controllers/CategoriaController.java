@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.andretavares.testesecurity.dto.CategoriaDto;
 import com.andretavares.testesecurity.entities.Categoria;
 import com.andretavares.testesecurity.services.CategoriaService;
 
@@ -20,20 +21,20 @@ public class CategoriaController {
     @Autowired
     private CategoriaService categoriaService;
 
-    @Operation(summary  = "Retorna todas as categorias existentes no banco de dados")
+    @Operation(summary  = "Retorna todas as categorias ativas existentes no banco de dados")
     @GetMapping("/categoria")
-    public List<Categoria> findAll(){
-        return categoriaService.findAll();
+    public List<CategoriaDto> findAll(){
+        return categoriaService.findAllAtivas();
     }
 
     @Operation(summary  = "Retorna uma categoria pelo id", description  = "Envie para esse endpoint o id da categoria")
     @GetMapping("/categoria/{id}")
-    public Categoria findById(@PathVariable("id") Long id){
+    public CategoriaDto findById(@PathVariable("id") Long id){
         return categoriaService.findById(id);
     }
 
     @GetMapping("buscar-por-nome/categoria/{nome}")
-    public Categoria findByNome(@PathVariable("nome") String nome){
+    public CategoriaDto findByNome(@PathVariable("nome") String nome){
         return categoriaService.findByNome(nome);
     }
 

@@ -21,8 +21,8 @@ import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.andretavares.testesecurity.FileStorageProperties;
-import com.andretavares.testesecurity.exceptions.FileNotFoundException;
 import com.andretavares.testesecurity.exceptions.FileStorageException;
+import com.andretavares.testesecurity.exceptions.NotFoundException;
 import com.andretavares.testesecurity.services.amazon.AmazonService;
 
 @Service
@@ -85,11 +85,11 @@ public class FileStorageService {
             Path filePath = this.fileStorageLocation.resolve(fileName);
             UrlResource resource = new UrlResource(filePath.toUri());
             if (!resource.exists()) {
-                throw new FileNotFoundException("Arquivo não encontrado");
+                throw new NotFoundException("Arquivo não encontrado");
             }
             return resource;
         } catch (MalformedURLException e) {
-            throw new FileNotFoundException("Arquivo não encontrado", e);
+            throw new NotFoundException("Arquivo não encontrado", e);
         }
     }
 

@@ -1,10 +1,18 @@
 package com.andretavares.testesecurity.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CategoriaDto {
     
-    private String name;
+    private Long id;
+    private String nome;
+    private String urlImagem;
+    private String descricao;
+    private boolean situacao;
     
 }

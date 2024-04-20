@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,14 +23,27 @@ public class Categoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
+    private String urlImagem;
+    private String descricao;
+    private boolean situacao;
+
 
     @OneToMany(mappedBy = "categoria")
-    @JsonIgnore
+    // @JsonIgnore
     private List<Produto> produtos;
 
     public Categoria(String nome) {
         this.nome = nome;
     }
+
+    public Categoria(String nome, String urlImagem, String descricao, boolean situacao) {
+        this.nome = nome;
+        this.urlImagem = urlImagem;
+        this.descricao = descricao;
+        this.situacao = situacao;
+    }
+
+    
 
     // Getters e setters
 

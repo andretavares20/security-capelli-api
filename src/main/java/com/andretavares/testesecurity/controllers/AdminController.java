@@ -199,11 +199,17 @@ public class AdminController {
     public Categoria create(@RequestBody CategoriaDto categoriaDto){
         return categoriaService.create(categoriaDto);
     }
+
+    @Operation(summary  = "Retorna todas as categorias existentes no banco de dados")
+    @GetMapping("/categoria")
+    public ResponseEntity<List<CategoriaDto>> findAllCategorias(){
+        return ResponseEntity.ok().body(categoriaService.findAll());
+    }
     
     @Operation(summary  = "Atualiza uma categoria pelo id", description  = "Envie para esse endpoint o corpo do objeto contendo o id")
     @PutMapping("/categoria")
-    public Categoria edit(@RequestBody Categoria categoria){
-        return categoriaService.edit(categoria);
+    public ResponseEntity<CategoriaDto> edit(@RequestBody CategoriaDto categoria){
+        return ResponseEntity.ok().body(categoriaService.edit(categoria));
     }
 
     
@@ -235,6 +241,8 @@ public class AdminController {
     public ResponseEntity<Volume> postVolume(@RequestParam String gramas){
         return ResponseEntity.ok().body(volumeService.postVolume(gramas));
     }
+
+    
 
     // @PostMapping("/user")
     // public ResponseEntity<?> addUser(@RequestBody UserDto userDto){
