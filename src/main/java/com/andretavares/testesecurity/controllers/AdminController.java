@@ -24,6 +24,7 @@ import com.andretavares.testesecurity.dto.CorDto;
 import com.andretavares.testesecurity.dto.OrdemRequest;
 import com.andretavares.testesecurity.dto.OrdemResponse;
 import com.andretavares.testesecurity.dto.ProdutoDto;
+import com.andretavares.testesecurity.dto.VolumeDto;
 import com.andretavares.testesecurity.entities.Categoria;
 import com.andretavares.testesecurity.entities.Cor;
 import com.andretavares.testesecurity.entities.Ordem;
@@ -242,7 +243,24 @@ public class AdminController {
         return ResponseEntity.ok().body(volumeService.postVolume(gramas));
     }
 
-    
+    @GetMapping("/volume")
+    public ResponseEntity<List<VolumeDto>> listVolume() {
+
+        return ResponseEntity.ok().body(volumeService.getListVolume());
+
+    }
+
+    @PutMapping("/volume/{id}")
+    public ResponseEntity<Volume> putVolume(@PathVariable Long id, @RequestParam String gramas) {
+        Volume volume = volumeService.updateVolume(id, gramas);
+        return ResponseEntity.ok().body(volume);
+    }
+
+    @DeleteMapping("/volume/{id}")
+    public ResponseEntity<Void> deleteVolume(@PathVariable Long id) {
+        volumeService.deleteVolume(id);
+        return ResponseEntity.noContent().build();
+    }
 
     // @PostMapping("/user")
     // public ResponseEntity<?> addUser(@RequestBody UserDto userDto){
