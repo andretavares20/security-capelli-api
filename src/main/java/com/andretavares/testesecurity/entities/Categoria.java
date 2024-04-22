@@ -24,7 +24,9 @@ public class Categoria {
     private Long id;
     private String nome;
     private String urlImagem;
+    @Column(length = 500)
     private String descricao;
+    @Column(columnDefinition = "TINYINT(1)")
     private boolean situacao;
 
 
