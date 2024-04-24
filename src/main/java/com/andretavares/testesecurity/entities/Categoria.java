@@ -34,6 +34,9 @@ public class Categoria {
     // @JsonIgnore
     private List<Produto> produtos;
 
+    @OneToMany(mappedBy = "categoria")
+    private List<Arquivo> arquivos;
+
     public Categoria(String nome) {
         this.nome = nome;
     }

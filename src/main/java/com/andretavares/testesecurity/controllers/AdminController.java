@@ -109,12 +109,19 @@ public class AdminController {
     }
 
     @Operation(summary = "Adiciona imagens a um produto", description = "Envie para esse endpoint o JSON contendo os dados do produto e imagens")
-    @PostMapping(value = "/adicionar-imagens", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<Object> addImagens(@RequestParam Long idProduto,
+    @PostMapping(value = "/produto/adicionar-imagens", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<Object> addImagensProdut(@RequestParam Long idProduto,
             @RequestPart("files") List<MultipartFile> files) throws IOException {
 
         return ResponseEntity.ok().body(produtoService.addImagens(idProduto, files));
         
+    }
+
+    @PostMapping(value = "/categoria/{id}/adicionar-imagens", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<Categoria> addImagensCategoria(@PathVariable Long id, @RequestPart("files") List<MultipartFile> files)
+            throws IOException {
+        Categoria categoria = categoriaService.addImagens(id, files);
+        return ResponseEntity.ok().body(categoria);
     }
 
     @Operation(summary  = "Finaliza compra no carrinho e gera um ordem de compra em RASCUNHO", description  = "Envie para esse endpoint o id do usuário que ta realizando a compra, o json do objeto Ordem e os itens contendo o id do produto.")

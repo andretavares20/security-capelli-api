@@ -29,6 +29,11 @@ public class Arquivo {
     @JsonIgnore
     private Produto produto;
 
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    @JsonIgnore
+    private Categoria categoria;
+
     public Arquivo(String nome, String caminho, Produto produto) {
         this.nome = nome;
         this.caminho = caminho;
@@ -42,7 +47,12 @@ public class Arquivo {
         this.produto = produto;
     }
     
-    // Getters e Setters
+    public Arquivo(String nome, String caminho, String nomeVerdadeiro, Categoria categoria) {
+        this.nome = nome;
+        this.caminho = caminho;
+        this.nomeVerdadeiro = nomeVerdadeiro;
+        this.categoria = categoria;
+    }
 
     
 }
