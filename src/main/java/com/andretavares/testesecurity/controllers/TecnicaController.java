@@ -22,7 +22,7 @@ public class TecnicaController {
     private TecnicaService tecnicaService;
 
     @GetMapping()
-    public ResponseEntity<List<TecnicaDto>> listTamanho() {
+    public ResponseEntity<List<TecnicaDto>> listTecnica() {
 
         return ResponseEntity.ok().body(tecnicaService.getListTecnica());
 

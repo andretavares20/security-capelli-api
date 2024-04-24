@@ -5,6 +5,7 @@ import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +25,8 @@ import com.andretavares.testesecurity.dto.CorDto;
 import com.andretavares.testesecurity.dto.OrdemRequest;
 import com.andretavares.testesecurity.dto.OrdemResponse;
 import com.andretavares.testesecurity.dto.ProdutoDto;
+import com.andretavares.testesecurity.dto.TamanhoDto;
+import com.andretavares.testesecurity.dto.TecnicaDto;
 import com.andretavares.testesecurity.dto.VolumeDto;
 import com.andretavares.testesecurity.entities.Categoria;
 import com.andretavares.testesecurity.entities.Cor;
@@ -240,9 +243,46 @@ public class AdminController {
         return ResponseEntity.ok().body(tamanhoService.postTamanho(cm));
     }
 
+    @GetMapping("/tamanho")
+    public ResponseEntity<List<TamanhoDto>> listTamanho() {
+
+        return ResponseEntity.ok().body(tamanhoService.getListTamanho());
+
+    }
+
+    @PutMapping("/tamanho/{id}")
+    public ResponseEntity<Tamanho> updateTamanho(@PathVariable Long id, @RequestBody TamanhoDto tamanhoDto) {
+        return ResponseEntity.ok().body(tamanhoService.updateTamanho(id, tamanhoDto));
+    }
+
+    @DeleteMapping("/tamanho/{id}")
+    public ResponseEntity<Void> deleteTamanho(@PathVariable Long id) {
+        tamanhoService.deleteTamanho(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/tecnica")
     public ResponseEntity<Tecnica> postTecnica(@RequestParam String nome){
         return ResponseEntity.ok().body(tecnicaService.postTecnica(nome));
+    }
+
+    @GetMapping("/tecnica")
+    public ResponseEntity<List<TecnicaDto>> listTecnica() {
+
+        return ResponseEntity.ok().body(tecnicaService.getListTecnica());
+
+    }
+
+    @PutMapping("/tecnica/{id}")
+    public ResponseEntity<Tecnica> updateTecnica(@PathVariable Long id, @RequestBody TecnicaDto tecnicaDto) {
+        Tecnica updatedTecnica = tecnicaService.updateTecnica(id, tecnicaDto);
+        return ResponseEntity.ok().body(updatedTecnica);
+    }
+
+    @DeleteMapping("/tecnica/{id}")
+    public ResponseEntity<Void> deleteTecnica(@PathVariable Long id) {
+        tecnicaService.deleteTecnica(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PostMapping("/volume")

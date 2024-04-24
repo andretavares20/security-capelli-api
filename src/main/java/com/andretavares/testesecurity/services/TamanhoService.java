@@ -2,7 +2,9 @@ package com.andretavares.testesecurity.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,8 @@ public class TamanhoService {
 
     @Autowired
     public TamanhoRepository tamanhoRepository;
+    @Autowired
+    public ModelMapper modelMapper;
     
     public Tamanho postTamanho(String cm){
         Tamanho tamanho =  new Tamanho(cm);
@@ -32,6 +36,25 @@ public class TamanhoService {
             listTamanhoDto.add(tamanhoDto);
         }
         return listTamanhoDto;
+    }
+
+    public Tamanho updateTamanho(Long id, TamanhoDto tamanhoDto) {
+        Optional<Tamanho> optionalTamanho = tamanhoRepository.findById(id);
+        if (optionalTamanho.isEmpty()) {
+            // Lançar exceção de recurso não encontrado se o tamanho não existir
+        }
+
+        Tamanho tamanho = optionalTamanho.get();
+
+        // Mapear os campos não nulos do DTO para a entidade Tamanho
+        modelMapper.map(tamanhoDto, tamanho);
+
+        // Salvar e retornar o tamanho atualizado
+        return tamanhoRepository.save(tamanho);
+    }
+
+    public void deleteTamanho(Long id) {
+        tamanhoRepository.deleteById(id);
     }
 
 }
