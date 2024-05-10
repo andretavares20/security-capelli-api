@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.andretavares.testesecurity.dto.VolumeDto;
+import com.andretavares.testesecurity.entities.Volume;
 import com.andretavares.testesecurity.services.VolumeService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class VolumeController {
     private VolumeService volumeService;
 
     @GetMapping()
-    public ResponseEntity<List<VolumeDto>> listVolume() {
+    public ResponseEntity<List<Volume>> listVolume() {
 
         return ResponseEntity.ok().body(volumeService.getListVolume());
 

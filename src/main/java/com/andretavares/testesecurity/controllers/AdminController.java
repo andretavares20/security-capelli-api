@@ -291,15 +291,29 @@ public class AdminController {
     }
 
     @GetMapping("/volume")
-    public ResponseEntity<List<VolumeDto>> listVolume() {
+    public ResponseEntity<List<Volume>> listVolume() {
 
-        return ResponseEntity.ok().body(volumeService.getListVolume());
+        List<Volume> listVolumes = volumeService.getListVolume();
+
+        return ResponseEntity.ok().body(listVolumes);
 
     }
 
-    @PutMapping("/volume/{id}")
-    public ResponseEntity<Volume> putVolume(@PathVariable Long id, @RequestParam String gramas) {
-        Volume volume = volumeService.updateVolume(id, gramas);
+    @GetMapping("/volume/{idVolume}")
+    public ResponseEntity<Volume> getVolume(@PathVariable Long idVolume) {
+
+        Volume volume = volumeService.getVolume(idVolume);
+
+        return ResponseEntity.ok().body(volume);
+
+    }
+
+    @PutMapping("/volume/{idVolume}")
+    public ResponseEntity<Volume> putVolume(@PathVariable Long idVolume, @RequestBody VolumeDto volumeDto) {
+        Volume volume = volumeService.updateVolume(idVolume, volumeDto);
+        if (volume == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok().body(volume);
     }
 
