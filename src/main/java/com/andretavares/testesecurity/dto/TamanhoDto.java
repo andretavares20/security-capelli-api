@@ -8,4 +8,5 @@ public class TamanhoDto {
     private Long id;
 
     private String cm;
+    private boolean situacao;
 }

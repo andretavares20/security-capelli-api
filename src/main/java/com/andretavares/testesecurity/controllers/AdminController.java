@@ -99,15 +99,15 @@ public class AdminController {
         produtoService.deleteById(id);
     }
 
-    @Operation(summary  = "Retorna todos os usuários do sistema.")
+    @Operation(summary = "Retorna todos os usuários do sistema.")
     @GetMapping("/users")
-    public ResponseEntity<List<User>> findAll(){
+    public ResponseEntity<List<User>> findAll() {
         return ResponseEntity.ok().body(userService.findAll());
     }
 
-    @Operation(summary  = "Deleta usuário pelo id.", description  = "Você precisa enviar o id do usuário.")
+    @Operation(summary = "Deleta usuário pelo id.", description = "Você precisa enviar o id do usuário.")
     @DeleteMapping("/user/{id}")
-    public void deleteUserById(@PathVariable("id") Long id){
+    public void deleteUserById(@PathVariable("id") Long id) {
         userService.deleteById(id);
     }
 
@@ -117,25 +117,26 @@ public class AdminController {
             @RequestPart("files") List<MultipartFile> files) throws IOException {
 
         return ResponseEntity.ok().body(produtoService.addImagens(idProduto, files));
-        
+
     }
 
     @PostMapping(value = "/categoria/{id}/adicionar-imagens", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<Categoria> addImagensCategoria(@PathVariable Long id, @RequestPart("files") List<MultipartFile> files)
+    public ResponseEntity<Categoria> addImagensCategoria(@PathVariable Long id,
+            @RequestPart("files") List<MultipartFile> files)
             throws IOException {
         Categoria categoria = categoriaService.addImagens(id, files);
         return ResponseEntity.ok().body(categoria);
     }
 
-    @Operation(summary  = "Finaliza compra no carrinho e gera um ordem de compra em RASCUNHO", description  = "Envie para esse endpoint o id do usuário que ta realizando a compra, o json do objeto Ordem e os itens contendo o id do produto.")
+    @Operation(summary = "Finaliza compra no carrinho e gera um ordem de compra em RASCUNHO", description = "Envie para esse endpoint o id do usuário que ta realizando a compra, o json do objeto Ordem e os itens contendo o id do produto.")
     @PostMapping("/ordens")
-    public ResponseEntity<OrdemResponse> create(Long userId, @RequestBody OrdemRequest request,Principal userLogged) {
+    public ResponseEntity<OrdemResponse> create(Long userId, @RequestBody OrdemRequest request, Principal userLogged) {
 
-        return ResponseEntity.ok().body(ordemService.create(userId, request,userLogged));
+        return ResponseEntity.ok().body(ordemService.create(userId, request, userLogged));
 
     }
 
-    @Operation(summary  = "Cancela ordem de serviço e atualiza o status para CANCELADO", description  = "Envie para esse endpoint o id do usuário que ta cancelando a ordem e o id da ordem")
+    @Operation(summary = "Cancela ordem de serviço e atualiza o status para CANCELADO", description = "Envie para esse endpoint o id do usuário que ta cancelando a ordem e o id da ordem")
     @PutMapping("/ordens/{ordemId}/cancel")
     public ResponseEntity<Ordem> cancelOrdemUser(Long userId, @PathVariable("ordemId") Long ordemId) {
 
@@ -143,7 +144,7 @@ public class AdminController {
 
     }
 
-    @Operation(summary  = "Finaliza a ordem de serviço após o pedido ser entregue e atualiza o status para FINALIZADO", description  = "Envie para esse endpoint o id do usuário que ta finalizando a ordem e o id da ordem")
+    @Operation(summary = "Finaliza a ordem de serviço após o pedido ser entregue e atualiza o status para FINALIZADO", description = "Envie para esse endpoint o id do usuário que ta finalizando a ordem e o id da ordem")
     @PutMapping("/ordens/{ordemId}/finalizar-pedido")
     public ResponseEntity<Ordem> receber(Long userId, @PathVariable("ordemId") Long ordemId) {
 
@@ -151,7 +152,7 @@ public class AdminController {
 
     }
 
-    @Operation(summary  = "Realiza pagamento da ordem de serviço e atualiza o status para PAGO", description  = "Envie para esse endpoint o id do usuário que pagou a ordem de serviço e o id da ordem de serviço.")
+    @Operation(summary = "Realiza pagamento da ordem de serviço e atualiza o status para PAGO", description = "Envie para esse endpoint o id do usuário que pagou a ordem de serviço e o id da ordem de serviço.")
     @PutMapping("/ordens/{ordemId}/confirmar-pagamento")
     public ResponseEntity<Ordem> confirmacao(Long userId, @PathVariable("ordemId") Long ordemId) {
 
@@ -159,7 +160,7 @@ public class AdminController {
 
     }
 
-    @Operation(summary  = "Após o pagamento, atualiza o status da ordem de serviço para EMBALAGEM", description  = "Envie para esse endpoint o id do usuário que ta enviando o pedido para embalar e o id da ordem de serviço.")
+    @Operation(summary = "Após o pagamento, atualiza o status da ordem de serviço para EMBALAGEM", description = "Envie para esse endpoint o id do usuário que ta enviando o pedido para embalar e o id da ordem de serviço.")
     @PutMapping("/ordens/{ordemId}/embalar")
     public ResponseEntity<Ordem> embalar(Long userId, @PathVariable("ordemId") Long ordemId) {
 
@@ -167,7 +168,7 @@ public class AdminController {
 
     }
 
-    @Operation(summary  = "Após embalar e despachar para a entrega, atualiza o status da ordem de serviço para ENTREGA", description  = "Envie para esse endpoint o id do usuário que ta enviando o pedido e o id da ordem")
+    @Operation(summary = "Após embalar e despachar para a entrega, atualiza o status da ordem de serviço para ENTREGA", description = "Envie para esse endpoint o id do usuário que ta enviando o pedido e o id da ordem")
     @PutMapping("/ordens/{ordemId}/enviar")
     public ResponseEntity<Ordem> enviar(Long userId, @PathVariable("ordemId") Long ordemId) {
 
@@ -175,7 +176,7 @@ public class AdminController {
 
     }
 
-    @Operation(summary  = "Retorna todas as ordens de um usuário")
+    @Operation(summary = "Retorna todas as ordens de um usuário")
     @GetMapping("/user/ordens")
     public ResponseEntity<List<Ordem>> findAllOrdemUser(Long userId,
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
@@ -185,7 +186,7 @@ public class AdminController {
 
     }
 
-    @Operation(summary  = "Retorna todas as ordens do sistema")
+    @Operation(summary = "Retorna todas as ordens do sistema")
     @GetMapping("/ordens")
     public ResponseEntity<List<Ordem>> findAllOrdem(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
@@ -205,32 +206,31 @@ public class AdminController {
 
     }
 
-    @Operation(summary  = "Adiciona uma nova categoria", description  = "Envie para esse endpoint o corpo do objeto")
+    @Operation(summary = "Adiciona uma nova categoria", description = "Envie para esse endpoint o corpo do objeto")
     @PostMapping("/categoria")
-    public Categoria create(@RequestBody CategoriaDto categoriaDto){
+    public Categoria create(@RequestBody CategoriaDto categoriaDto) {
         return categoriaService.create(categoriaDto);
     }
 
-    @Operation(summary  = "Retorna todas as categorias existentes no banco de dados")
+    @Operation(summary = "Retorna todas as categorias existentes no banco de dados")
     @GetMapping("/categoria")
-    public ResponseEntity<List<CategoriaDto>> findAllCategorias(){
+    public ResponseEntity<List<CategoriaDto>> findAllCategorias() {
         return ResponseEntity.ok().body(categoriaService.findAll());
     }
-    
-    @Operation(summary  = "Atualiza uma categoria pelo id", description  = "Envie para esse endpoint o corpo do objeto contendo o id")
+
+    @Operation(summary = "Atualiza uma categoria pelo id", description = "Envie para esse endpoint o corpo do objeto contendo o id")
     @PutMapping("/categoria")
-    public ResponseEntity<CategoriaDto> edit(@RequestBody CategoriaDto categoria){
+    public ResponseEntity<CategoriaDto> edit(@RequestBody CategoriaDto categoria) {
         return ResponseEntity.ok().body(categoriaService.edit(categoria));
     }
 
-    
-    @Operation(summary  = "Deleta uma categoria pelo id", description  = "Envie para esse endpoint o id da categoria que deseja deletar")
+    @Operation(summary = "Deleta uma categoria pelo id", description = "Envie para esse endpoint o id da categoria que deseja deletar")
     @DeleteMapping("/categoria/{id}")
-    public void deleteCategoriaById(@PathVariable("id") Long id){
+    public void deleteCategoriaById(@PathVariable("id") Long id) {
         categoriaService.deleteById(id);
     }
 
-    @Operation(summary  = "Crie uma nova cor", description  = "Envie para esse endpoint o corpo da cor, contendo o nome e a categoria que ela pertence.")
+    @Operation(summary = "Crie uma nova cor", description = "Envie para esse endpoint o corpo da cor, contendo o nome e a categoria que ela pertence.")
     @PostMapping("/adicionar-cor")
     public ResponseEntity<Cor> postCor(@RequestBody CorDto corDto) {
 
@@ -239,20 +239,21 @@ public class AdminController {
     }
 
     @PostMapping("/tamanho")
-    public ResponseEntity<Tamanho> postTamanho(@RequestParam String cm){
-        return ResponseEntity.ok().body(tamanhoService.postTamanho(cm));
+    public ResponseEntity<Tamanho> create(@RequestBody TamanhoDto tamanhoDto) {
+        Tamanho tamanho = tamanhoService.create(tamanhoDto);
+        return new ResponseEntity<>(tamanho, HttpStatus.CREATED);
     }
 
     @GetMapping("/tamanho")
-    public ResponseEntity<List<TamanhoDto>> listTamanho() {
-
-        return ResponseEntity.ok().body(tamanhoService.getListTamanho());
-
+    public ResponseEntity<List<TamanhoDto>> findAllTamanhos() {
+        List<TamanhoDto> tamanhos = tamanhoService.findAll();
+        return ResponseEntity.ok(tamanhos);
     }
 
-    @PutMapping("/tamanho/{id}")
-    public ResponseEntity<Tamanho> updateTamanho(@PathVariable Long id, @RequestBody TamanhoDto tamanhoDto) {
-        return ResponseEntity.ok().body(tamanhoService.updateTamanho(id, tamanhoDto));
+    @PutMapping("/tamanho")
+    public ResponseEntity<TamanhoDto> edit(@RequestBody TamanhoDto tamanhoDto) {
+        TamanhoDto editedTamanho = tamanhoService.edit(tamanhoDto);
+        return ResponseEntity.ok(editedTamanho);
     }
 
     @DeleteMapping("/tamanho/{id}")
@@ -261,42 +262,46 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/tecnica/{id}")
+    public ResponseEntity<TecnicaDto> findById(@PathVariable Long id) {
+        TecnicaDto tecnicaDto = tecnicaService.findById(id);
+        return ResponseEntity.ok(tecnicaDto);
+    }
+
     @PostMapping("/tecnica")
-    public ResponseEntity<Tecnica> postTecnica(@RequestParam String nome){
-        return ResponseEntity.ok().body(tecnicaService.postTecnica(nome));
+    public ResponseEntity<Tecnica> create(@RequestBody TecnicaDto tecnicaDto) {
+        Tecnica tecnica = tecnicaService.create(tecnicaDto);
+        return new ResponseEntity<>(tecnica, HttpStatus.CREATED);
     }
 
     @GetMapping("/tecnica")
-    public ResponseEntity<List<TecnicaDto>> listTecnica() {
-
-        return ResponseEntity.ok().body(tecnicaService.getListTecnica());
-
+    public ResponseEntity<List<TecnicaDto>> findAllTecnicas() {
+        List<TecnicaDto> tecnicas = tecnicaService.findAll();
+        return ResponseEntity.ok(tecnicas);
     }
 
-    @PutMapping("/tecnica/{id}")
-    public ResponseEntity<Tecnica> updateTecnica(@PathVariable Long id, @RequestBody TecnicaDto tecnicaDto) {
-        Tecnica updatedTecnica = tecnicaService.updateTecnica(id, tecnicaDto);
-        return ResponseEntity.ok().body(updatedTecnica);
+    @PutMapping("/tecnica")
+    public ResponseEntity<TecnicaDto> edit(@RequestBody TecnicaDto tecnicaDto) {
+        TecnicaDto editedTecnica = tecnicaService.edit(tecnicaDto);
+        return ResponseEntity.ok(editedTecnica);
     }
 
     @DeleteMapping("/tecnica/{id}")
-    public ResponseEntity<Void> deleteTecnica(@PathVariable Long id) {
-        tecnicaService.deleteTecnica(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<Void> deleteTecnicaById(@PathVariable Long id) {
+        tecnicaService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Adiciona um novo volume", description = "Envie para esse endpoint o corpo do objeto")
     @PostMapping("/volume")
-    public ResponseEntity<Volume> postVolume(@RequestParam String gramas){
-        return ResponseEntity.ok().body(volumeService.postVolume(gramas));
+    public Volume create(@RequestBody VolumeDto volumeDto) {
+        return volumeService.create(volumeDto);
     }
 
+    @Operation(summary = "Retorna todos os volumes existentes no banco de dados")
     @GetMapping("/volume")
-    public ResponseEntity<List<Volume>> listVolume() {
-
-        List<Volume> listVolumes = volumeService.getListVolume();
-
-        return ResponseEntity.ok().body(listVolumes);
-
+    public ResponseEntity<List<VolumeDto>> findAllVolumes() {
+        return ResponseEntity.ok().body(volumeService.findAll());
     }
 
     @GetMapping("/volume/{idVolume}")
@@ -308,71 +313,71 @@ public class AdminController {
 
     }
 
-    @PutMapping("/volume/{idVolume}")
-    public ResponseEntity<Volume> putVolume(@PathVariable Long idVolume, @RequestBody VolumeDto volumeDto) {
-        Volume volume = volumeService.updateVolume(idVolume, volumeDto);
-        if (volume == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().body(volume);
+    @Operation(summary = "Atualiza um volume pelo id", description = "Envie para esse endpoint o corpo do objeto contendo o id")
+    @PutMapping("/volume")
+    public ResponseEntity<VolumeDto> edit(@RequestBody VolumeDto volume) {
+        return ResponseEntity.ok().body(volumeService.edit(volume));
     }
 
+    @Operation(summary = "Deleta um volume pelo id", description = "Envie para esse endpoint o id do volume que deseja deletar")
     @DeleteMapping("/volume/{id}")
-    public ResponseEntity<Void> deleteVolume(@PathVariable Long id) {
+    public void deleteVolumeById(@PathVariable("id") Long id) {
         volumeService.deleteVolume(id);
-        return ResponseEntity.noContent().build();
     }
 
     // @PostMapping("/user")
     // public ResponseEntity<?> addUser(@RequestBody UserDto userDto){
-    //     UserDto createdUserDto = adminService.postUser(userDto);
-    //     if(createdUserDto == null){
-    //         return new ResponseEntity<>("Something went wrong.",HttpStatus.BAD_REQUEST);
-    //     }else{
-    //         return ResponseEntity.status(HttpStatus.CREATED).body(createdUserDto);
-    //     }
-    // } 
+    // UserDto createdUserDto = adminService.postUser(userDto);
+    // if(createdUserDto == null){
+    // return new ResponseEntity<>("Something went wrong.",HttpStatus.BAD_REQUEST);
+    // }else{
+    // return ResponseEntity.status(HttpStatus.CREATED).body(createdUserDto);
+    // }
+    // }
 
     // @PostMapping("/user/google")
-    // public ResponseEntity<?> addUserGoogle(@RequestBody UserGoogleProviderDto userGoogleProviderDto){
-    //     UserDto createdUserDto = adminService.postUserGoogle(userGoogleProviderDto);
-    //     if(createdUserDto == null){
-    //         return new ResponseEntity<>("Something went wrong.",HttpStatus.BAD_REQUEST);
-    //     }else{
-    //         return ResponseEntity.status(HttpStatus.CREATED).body(createdUserDto);
-    //     }
-    // } 
+    // public ResponseEntity<?> addUserGoogle(@RequestBody UserGoogleProviderDto
+    // userGoogleProviderDto){
+    // UserDto createdUserDto = adminService.postUserGoogle(userGoogleProviderDto);
+    // if(createdUserDto == null){
+    // return new ResponseEntity<>("Something went wrong.",HttpStatus.BAD_REQUEST);
+    // }else{
+    // return ResponseEntity.status(HttpStatus.CREATED).body(createdUserDto);
+    // }
+    // }
 
     // @GetMapping("/users")
     // public ResponseEntity<List<UserDto>> getAllUsers(){
-        
-    //     List<UserDto> allUsers = adminService.getAllUsers();
 
-    //     return ResponseEntity.ok(allUsers);
+    // List<UserDto> allUsers = adminService.getAllUsers();
+
+    // return ResponseEntity.ok(allUsers);
     // }
 
     // @DeleteMapping("/user/{userId}")
     // public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
-    //     adminService.deleteUser(userId);
-    //     return ResponseEntity.noContent().build();
+    // adminService.deleteUser(userId);
+    // return ResponseEntity.noContent().build();
     // }
 
     // @GetMapping("/user/{userId}")
     // public ResponseEntity<SingleUserDto> getUserById(@PathVariable Long userId){
-        
-    //     SingleUserDto singleUserDto = adminService.getUserById(userId);
 
-    //     if(singleUserDto==null)
-    //         return ResponseEntity.notFound().build();
-    //     return ResponseEntity.ok(singleUserDto);
+    // SingleUserDto singleUserDto = adminService.getUserById(userId);
+
+    // if(singleUserDto==null)
+    // return ResponseEntity.notFound().build();
+    // return ResponseEntity.ok(singleUserDto);
 
     // }
 
     // @PutMapping("/user/{userId}")
-    // public ResponseEntity<?> updateUser(@PathVariable Long userId,@RequestBody UserDto userDto){
-    //     UserDto createdUserDto = adminService.updateUser(userId,userDto);
-    //     if(createdUserDto ==null) return new ResponseEntity<>("Something went wrong.", HttpStatus.BAD_REQUEST);
-    //     return ResponseEntity.status(HttpStatus.CREATED).body(createdUserDto);
+    // public ResponseEntity<?> updateUser(@PathVariable Long userId,@RequestBody
+    // UserDto userDto){
+    // UserDto createdUserDto = adminService.updateUser(userId,userDto);
+    // if(createdUserDto ==null) return new ResponseEntity<>("Something went
+    // wrong.", HttpStatus.BAD_REQUEST);
+    // return ResponseEntity.status(HttpStatus.CREATED).body(createdUserDto);
     // }
 
 }

@@ -1,15 +1,27 @@
 package com.andretavares.testesecurity.services;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.andretavares.testesecurity.dto.CategoriaDto;
 import com.andretavares.testesecurity.dto.TamanhoDto;
+import com.andretavares.testesecurity.dto.TecnicaDto;
+import com.andretavares.testesecurity.entities.Categoria;
 import com.andretavares.testesecurity.entities.Tamanho;
+import com.andretavares.testesecurity.entities.Tecnica;
+import com.andretavares.testesecurity.exceptions.BadRequestException;
+import com.andretavares.testesecurity.exceptions.NotFoundException;
 import com.andretavares.testesecurity.repositories.TamanhoRepository;
 
 @Service
@@ -20,37 +32,62 @@ public class TamanhoService {
     @Autowired
     public ModelMapper modelMapper;
     
-    public Tamanho postTamanho(String cm){
-        Tamanho tamanho =  new Tamanho(cm);
-        return tamanhoRepository.save(tamanho);
-
-    }
-
-    public List<TamanhoDto> getListTamanho(){
-        List<Tamanho> listTamanho = tamanhoRepository.findAll();
-        List<TamanhoDto> listTamanhoDto = new ArrayList<>();
-        for(Tamanho tamanho:listTamanho){
-            TamanhoDto tamanhoDto = new TamanhoDto();
-            tamanhoDto.setId(tamanho.getId());
-            tamanhoDto.setCm(tamanho.getCm());
-            listTamanhoDto.add(tamanhoDto);
-        }
-        return listTamanhoDto;
-    }
-
-    public Tamanho updateTamanho(Long id, TamanhoDto tamanhoDto) {
-        Optional<Tamanho> optionalTamanho = tamanhoRepository.findById(id);
-        if (optionalTamanho.isEmpty()) {
-            // Lançar exceção de recurso não encontrado se o tamanho não existir
+    public Tamanho create(TamanhoDto tamanhoDto) {
+        // Verifica se o nome da técnica já existe
+        if (tamanhoRepository.findByCm(tamanhoDto.getCm()) != null) {
+            throw new BadRequestException("Já existe um Tamanho com esse nome.");
         }
 
-        Tamanho tamanho = optionalTamanho.get();
+        // Mapeia o objeto TecnicaDto para Tecnica
+        Tamanho tamanho = modelMapper.map(tamanhoDto, Tamanho.class);
 
-        // Mapear os campos não nulos do DTO para a entidade Tamanho
-        modelMapper.map(tamanhoDto, tamanho);
-
-        // Salvar e retornar o tamanho atualizado
+        // Salva a técnica e a retorna
         return tamanhoRepository.save(tamanho);
+    }
+
+    public List<TamanhoDto> findAll() {
+        List<Tamanho> tamanhos = tamanhoRepository.findAll();
+        return tamanhos.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    private TamanhoDto convertToDto(Tamanho tamanho) {
+        return modelMapper.map(tamanho, TamanhoDto.class);
+    }
+
+    public TamanhoDto edit(TamanhoDto tamanhoDto) {
+        // Verifica se o ID da categoria foi informado
+        Long tamanhoId = tamanhoDto.getId();
+        if (tamanhoId == null) {
+            throw new BadRequestException("O ID da tecnica não foi informado");
+        }
+    
+        // Busca a categoria existente pelo ID
+        Tamanho tamanhoExistente = tamanhoRepository.findById(tamanhoId)
+                .orElseThrow(() -> new NotFoundException("Tamanho não encontrada com o ID: " + tamanhoId));
+    
+        // Copia apenas as propriedades não nulas do DTO para a entidade Categoria
+        BeanUtils.copyProperties(tamanhoDto, tamanhoExistente, getNullPropertyNames(tamanhoDto));
+    
+        // Salva a categoria atualizada
+        tamanhoExistente = tamanhoRepository.save(tamanhoExistente);
+    
+        // Converte a categoria atualizada para CategoriaDto
+        return modelMapper.map(tamanhoExistente, TamanhoDto.class);
+    }
+
+    private String[] getNullPropertyNames(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
+    
+        Set<String> emptyNames = new HashSet<>();
+        for (java.beans.PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) emptyNames.add(pd.getName());
+        }
+        String[] result = new String[emptyNames.size()];
+        return emptyNames.toArray(result);
     }
 
     public void deleteTamanho(Long id) {

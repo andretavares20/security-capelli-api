@@ -8,4 +8,5 @@ public class TecnicaDto {
     private Long id;
 
     private String nome;
+    private boolean situacao;
 }

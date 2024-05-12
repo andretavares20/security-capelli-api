@@ -21,11 +21,10 @@ public class TamanhoController {
     @Autowired
     private TamanhoService tamanhoService;
 
-    @GetMapping()
-    public ResponseEntity<List<TamanhoDto>> listTamanho() {
-
-        return ResponseEntity.ok().body(tamanhoService.getListTamanho());
-
+    @GetMapping("")
+    public ResponseEntity<List<TamanhoDto>> findAllTamanhos() {
+        List<TamanhoDto> tamanhos = tamanhoService.findAll();
+        return ResponseEntity.ok(tamanhos);
     }
     
 }

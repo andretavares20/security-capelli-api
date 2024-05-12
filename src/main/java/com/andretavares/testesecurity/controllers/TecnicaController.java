@@ -21,11 +21,10 @@ public class TecnicaController {
     @Autowired
     private TecnicaService tecnicaService;
 
-    @GetMapping()
-    public ResponseEntity<List<TecnicaDto>> listTecnica() {
-
-        return ResponseEntity.ok().body(tecnicaService.getListTecnica());
-
+    @GetMapping("/all")
+    public ResponseEntity<List<TecnicaDto>> findAllTecnicas() {
+        List<TecnicaDto> tecnicas = tecnicaService.findAll();
+        return ResponseEntity.ok(tecnicas);
     }
 
 }

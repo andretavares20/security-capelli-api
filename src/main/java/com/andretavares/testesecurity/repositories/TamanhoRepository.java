@@ -6,5 +6,5 @@ import com.andretavares.testesecurity.entities.Arquivo;
 import com.andretavares.testesecurity.entities.Tamanho;
 
 public interface TamanhoRepository extends JpaRepository<Tamanho,Long>{
-    
+    Tamanho findByCm(String cm);
 }

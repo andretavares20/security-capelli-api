@@ -8,9 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.andretavares.testesecurity.entities.Volume;
+import com.andretavares.testesecurity.dto.VolumeDto;
 import com.andretavares.testesecurity.services.VolumeService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -21,11 +22,10 @@ public class VolumeController {
     @Autowired
     private VolumeService volumeService;
 
+    @Operation(summary = "Retorna todos os volumes existentes no banco de dados")
     @GetMapping()
-    public ResponseEntity<List<Volume>> listVolume() {
-
-        return ResponseEntity.ok().body(volumeService.getListVolume());
-
+    public ResponseEntity<List<VolumeDto>> findAllVolumes() {
+        return ResponseEntity.ok().body(volumeService.findAll());
     }
 
 }

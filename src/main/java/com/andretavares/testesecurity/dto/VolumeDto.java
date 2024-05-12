@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class VolumeDto {
 
+    private Long id;
     private String gramas;
 
     private boolean situacao;
