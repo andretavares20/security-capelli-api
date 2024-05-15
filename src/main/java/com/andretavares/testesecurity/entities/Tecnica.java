@@ -28,7 +28,7 @@ public class Tecnica implements Serializable {
     private String nome;
 
     @Column(columnDefinition = "TINYINT(1)")
-    private boolean situacao;
+    private Boolean situacao;
 
     // @JsonIgnore
     // @ManyToMany(mappedBy = "tecnicas")

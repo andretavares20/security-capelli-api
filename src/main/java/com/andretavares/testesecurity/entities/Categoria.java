@@ -27,7 +27,7 @@ public class Categoria {
     @Column(length = 500)
     private String descricao;
     @Column(columnDefinition = "TINYINT(1)")
-    private boolean situacao;
+    private Boolean situacao;
 
 
     @OneToMany(mappedBy = "categoria")
@@ -41,7 +41,7 @@ public class Categoria {
         this.nome = nome;
     }
 
-    public Categoria(String nome, String urlImagem, String descricao, boolean situacao) {
+    public Categoria(String nome, String urlImagem, String descricao, Boolean situacao) {
         this.nome = nome;
         this.urlImagem = urlImagem;
         this.descricao = descricao;

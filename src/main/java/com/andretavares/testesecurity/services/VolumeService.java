@@ -39,7 +39,7 @@ public class VolumeService {
         VolumeDto volumeDto = new VolumeDto();
         volumeDto.setId(volume.getId());
         volumeDto.setGramas(volume.getGramas());
-        volumeDto.setSituacao(volume.isSituacao());
+        volumeDto.setSituacao(volume.getSituacao());
         return volumeDto;
     }
 

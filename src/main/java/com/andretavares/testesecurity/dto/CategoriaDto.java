@@ -13,6 +13,6 @@ public class CategoriaDto {
     private String nome;
     private String urlImagem;
     private String descricao;
-    private boolean situacao;
+    private Boolean situacao;
     
 }

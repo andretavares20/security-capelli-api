@@ -10,6 +10,6 @@ public interface CategoriaRepository extends JpaRepository<Categoria,Long>{
 
     Categoria findByNome(String nome);
 
-    List<Categoria> findAllBySituacao(boolean stiuacao);
+    List<Categoria> findAllBySituacao(Boolean stiuacao);
     
 }

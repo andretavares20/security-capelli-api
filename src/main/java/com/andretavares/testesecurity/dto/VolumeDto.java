@@ -12,5 +12,5 @@ public class VolumeDto {
     private Long id;
     private String gramas;
 
-    private boolean situacao;
+    private Boolean situacao;
 }

@@ -78,7 +78,7 @@ public class CategoriaService {
     public Categoria create(CategoriaDto categoriaDto) {
 
         Categoria categoria = new Categoria(categoriaDto.getNome(), categoriaDto.getUrlImagem(),
-                categoriaDto.getDescricao(), categoriaDto.isSituacao());
+                categoriaDto.getDescricao(), categoriaDto.getSituacao());
 
         return categoriaRepository.save(categoria);
     }

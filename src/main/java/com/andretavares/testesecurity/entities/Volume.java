@@ -30,7 +30,7 @@ public class Volume implements Serializable{
     private String gramas;
 
     @Column(columnDefinition = "TINYINT(1)")
-    private boolean situacao;
+    private Boolean situacao;
 
     // @JsonIgnore
     // @ManyToMany(mappedBy = "volumes")

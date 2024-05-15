@@ -28,7 +28,7 @@ public class Tamanho implements Serializable{
     private String cm;
 
     @Column(columnDefinition = "TINYINT(1)")
-    private boolean situacao;
+    private Boolean situacao;
 
     // @JsonIgnore
     // @ManyToMany(mappedBy = "tamanhos")
