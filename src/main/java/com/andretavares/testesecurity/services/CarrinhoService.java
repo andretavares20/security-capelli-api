@@ -73,7 +73,6 @@ public class CarrinhoService {
         carrinho = new Carrinho();
         carrinho.setProduto(produto);
         carrinho.setQuantidade(quantidade);
-        carrinho.setPreco(produto.getPrice());
         carrinho.setQuantia(new BigDecimal(carrinho.getPreco().doubleValue() * carrinho.getQuantidade()));
         carrinho.setUser(new User(idUser));
 

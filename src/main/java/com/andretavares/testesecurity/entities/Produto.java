@@ -28,8 +28,6 @@ public class Produto implements Serializable {
     private Long id;
     private String name;
     private String description;
-    private BigDecimal price;
-    private Long estoque;
 
     @OneToOne()
     @JoinColumn(name = "categoria_id", referencedColumnName = "id")
@@ -39,15 +37,15 @@ public class Produto implements Serializable {
     private List<Arquivo> arquivos = new ArrayList<>();
 
     @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
-    private List<Avaliacao> avaliacoes = new ArrayList<>(); // Adicionando lista de avaliações
+    private List<Avaliacao> avaliacoes = new ArrayList<>(); 
 
-    public Produto(String name, String description, Categoria categoria, BigDecimal price,
-            Long estoque) {
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
+    private List<ProdutoTamanho> produtoTamanhos = new ArrayList<>();
+
+    public Produto(String name, String description, Categoria categoria) {
         this.name = name;
         this.description = description;
         this.categoria = categoria;
-        this.price = price;
-        this.estoque = estoque;
     }
 
 }

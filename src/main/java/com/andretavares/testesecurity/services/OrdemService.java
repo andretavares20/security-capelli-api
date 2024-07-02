@@ -85,15 +85,10 @@ public class OrdemService {
                     .orElseThrow(
                             () -> new BadRequestException("Produto Id " + k.getProdutoId() + "não foi encontrado"));
 
-            if (produto.getEstoque() < k.getQuantidade()) {
-                throw new BadRequestException("Estoque insuficiente");
-            }
-
             OrdemItem ordemItem = new OrdemItem();
             ordemItem.setProduto(produto);
             ordemItem.setDescription(produto.getName());
             ordemItem.setQuantidade(k.getQuantidade());
-            ordemItem.setPreço(produto.getPrice());
             ordemItem.setQuantia(new BigDecimal(ordemItem.getPreço().doubleValue() * ordemItem.getQuantidade()));
             ordemItem.setOrdem(ordem);
 
@@ -133,7 +128,6 @@ public class OrdemService {
         for (OrdemItem ordemItem : items) {
             ordemItemRepository.save(ordemItem);
             Produto produto = ordemItem.getProduto();
-            produto.setEstoque(produto.getEstoque() - ordemItem.getQuantidade());
             produtoRepository.save(produto);
             carrinhoService.delete(idUser, produto.getId(), userLogged);
         }

@@ -1,37 +1,38 @@
 package com.andretavares.testesecurity.entities;
 
-import com.andretavares.testesecurity.entities.keys.ProdutoVolumeKey;
+import java.math.BigDecimal;
 
-import jakarta.persistence.EmbeddedId;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "produto_volume")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProdutoVolume {
 
-    @EmbeddedId
-    ProdutoVolumeKey id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
-    @MapsId("produtoId")
-    @JoinColumn(name = "produto_id")
-    Produto produto;
+    @JoinColumn(name = "produto_tamanho_id")
+    @JsonIgnore
+    private ProdutoTamanho produtoTamanho;
 
     @ManyToOne
-    @MapsId("volumeId")
     @JoinColumn(name = "volume_id")
-    Volume volume;
+    private Volume volume;
 
-    private Boolean disponivel;
+    private BigDecimal price;
 
 }
