@@ -39,6 +39,10 @@ public class User {
 
     private UserRole role;
 
+    private String cpf;
+
+    private String socialName;
+
     @JsonIgnore
     private String celular;
     @JsonIgnore
@@ -61,7 +65,7 @@ public class User {
 
     public User(Long id, String email, String password, String name, UserRole role,
             String celular,
-            Boolean isActive, RegistrationSource source, Date dataNascimento, String genero) {
+            Boolean isActive, RegistrationSource source, Date dataNascimento, String genero,String cpf,String socialName) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -72,6 +76,8 @@ public class User {
         this.source = source;
         this.dataNascimento = dataNascimento;
         this.genero = genero;
+        this.cpf=cpf;
+        this.socialName=socialName;
     }
 
     public User() {

@@ -64,15 +64,25 @@ public class UserService {
         for (User user : userList) {
             if (user.getEmail().equals(userDto.getEmail())) {
                 throw new BadRequestException(
-                        "Já existe um usuário CUSTOM com email " + userDto.getEmail() + " criado");
+                        "Já existe um usuário com email " + userDto.getEmail() + " criado");
+            }
+        }
+
+        userList = userRepository.findAllByCpf(userDto.getCpf());
+
+        for (User user : userList) {
+            if (user.getCpf().equals(userDto.getCpf())) {
+                throw new BadRequestException(
+                        "Já existe um usuário com cpf " + userDto.getCpf() + " criado");
             }
         }
 
         User user = new User(userDto.getId(), userDto.getEmail(),
                 new BCryptPasswordEncoder().encode(userDto.getPassword()), userDto.getName(), userDto.getRole(),
                 userDto.getCelular(), userDto.getIsActive(), userDto.getSource(), userDto.getDataNascimento(),
-                userDto.getGenero());
+                userDto.getGenero(),userDto.getCpf(),userDto.getSocialName());
         user.setRole(UserRole.USER);
+        user.setIsActive(true);
 
         User userSaved = userRepository.save(user);
         List<Endereco> listEndereco = new ArrayList<>();

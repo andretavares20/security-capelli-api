@@ -24,6 +24,10 @@ public class UserDto {
 
     private UserRole role;
 
+    private String cpf;
+
+    private String socialName;
+
     @JsonIgnore
     private byte[] img;
 
