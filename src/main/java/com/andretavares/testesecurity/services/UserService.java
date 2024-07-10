@@ -155,12 +155,14 @@ public class UserService {
             user.setSource(RegistrationSource.GOOGLE);
             user.setIsActive(true);
             user.setPassword(senhaCriptografada);
+            user.setImg(userDto.getPicture());
             User createdUser = userRepository.save(user);
             UserDto createdUserDto = new UserDto();
             createdUserDto.setId(createdUser.getId());
             createdUserDto.setEmail(createdUser.getEmail());
             createdUserDto.setRole(UserRole.USER);
             createdUserDto.setPassword(senhaCriptografada);
+            createdUserDto.setImg(createdUser.getImg());
             return createdUserDto;
         } else {
 
@@ -169,6 +171,7 @@ public class UserService {
             createdUserDto.setEmail(userComSourceGoogle.get().getEmail());
             createdUserDto.setRole(UserRole.USER);
             createdUserDto.setPassword(userComSourceGoogle.get().getPassword());
+            createdUserDto.setImg(userComSourceGoogle.get().getImg());
             return createdUserDto;
 
         }

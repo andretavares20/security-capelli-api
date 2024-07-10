@@ -31,6 +31,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String email;
 
     private String password;
@@ -39,6 +40,7 @@ public class User {
 
     private UserRole role;
 
+    @Column(unique = true)
     private String cpf;
 
     private String socialName;
@@ -56,9 +58,7 @@ public class User {
 
     private String genero;
 
-    @Lob
-    @Column(columnDefinition = "longblob")
-    private byte[] img;
+    private String img;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Endereco> enderecos = new ArrayList<>();

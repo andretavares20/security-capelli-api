@@ -28,8 +28,7 @@ public class UserDto {
 
     private String socialName;
 
-    @JsonIgnore
-    private byte[] img;
+    private String img;
 
     private String celular;
 
