@@ -2,6 +2,7 @@ package com.andretavares.testesecurity.entities;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
@@ -25,6 +26,7 @@ public class Avaliacao implements Serializable {
     @ManyToOne
     @JoinColumn(name = "produto_id")
     @JsonIgnoreProperties("avaliacoes") // Indica que a propriedade "avaliacoes" em Produto deve ser ignorada durante a serialização
+    @JsonIgnore
     private Produto produto;
 
     @ManyToOne

@@ -31,7 +31,7 @@ public class Categoria {
 
 
     @OneToMany(mappedBy = "categoria")
-    // @JsonIgnore
+    @JsonIgnore
     private List<Produto> produtos;
 
     @OneToMany(mappedBy = "categoria")
