@@ -1,0 +1,215 @@
+package com.capellimegahair.api.services;
+
+import java.math.BigDecimal;
+import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.capellimegahair.api.entities.Carrinho;
+import com.capellimegahair.api.entities.Produto;
+import com.capellimegahair.api.entities.Tamanho;
+import com.capellimegahair.api.entities.Tecnica;
+import com.capellimegahair.api.entities.User;
+import com.capellimegahair.api.entities.Volume;
+import com.capellimegahair.api.exceptions.BadRequestException;
+import com.capellimegahair.api.repositories.CarrinhoRepository;
+import com.capellimegahair.api.repositories.ProdutoRepository;
+import com.capellimegahair.api.repositories.TamanhoRepository;
+import com.capellimegahair.api.repositories.TecnicaRepository;
+import com.capellimegahair.api.repositories.UserRepository;
+import com.capellimegahair.api.repositories.VolumeRepository;
+
+import jakarta.transaction.Transactional;
+
+@Service
+public class CarrinhoService {
+
+    @Autowired
+    private ProdutoRepository produtoRepository;
+
+    @Autowired
+    private CarrinhoRepository carrinhoRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TamanhoRepository tamanhoRepository;
+
+    @Autowired
+    private TecnicaRepository tecnicaRepository;
+
+    @Autowired
+    private VolumeRepository volumeRepository;
+
+    @Transactional
+    public Carrinho addCarrinho(Long idUser, Long produtoId, Long quantidade, Long tamanhoId, Long tecnicaId,
+            Long volumeId, Principal userLogged) {
+
+        Optional<User> optionalUser = userRepository.findById(idUser);
+
+        if (optionalUser.isPresent()) {
+
+            User user = optionalUser.get();
+
+            if (!user.getEmail().equals(userLogged.getName())) {
+
+                System.out.println("Usuário que solicitou não é o mesmo que esta logado.");
+                throw new BadRequestException("Usuário que solicitou não é o mesmo que esta logado.");
+            }
+
+        }
+
+        Produto produto = produtoRepository.findById(produtoId)
+                .orElseThrow(() -> new BadRequestException("Produto de id " + produtoId + " não encontrado"));
+
+        Optional<Carrinho> optionalCarrinho = carrinhoRepository.findByUserIdAndProdutoId(idUser, produtoId);
+        Carrinho carrinho;
+
+        carrinho = new Carrinho();
+        carrinho.setProduto(produto);
+        carrinho.setQuantidade(quantidade);
+        carrinho.setQuantia(new BigDecimal(carrinho.getPreco().doubleValue() * carrinho.getQuantidade()));
+        carrinho.setUser(new User(idUser));
+
+        Optional<Tecnica> optionalTecnica = tecnicaRepository.findById(tecnicaId);
+        if (optionalTecnica.isPresent()) {
+            carrinho.setTecnica(optionalTecnica.get());
+        }
+
+        Optional<Tamanho> optionalTamanho = tamanhoRepository.findById(tamanhoId);
+        if (optionalTamanho.isPresent()) {
+            carrinho.setTamanho(optionalTamanho.get());
+        }
+
+        Optional<Volume> optionalVolume = volumeRepository.findById(volumeId);
+        if (optionalVolume.isPresent()) {
+            carrinho.setVolume(optionalVolume.get());
+        }
+
+        carrinho.setDataCriacao(LocalDateTime.now());
+
+        carrinhoRepository.save(carrinho);
+
+        return carrinho;
+
+    }
+
+    public Carrinho updateQuantidade(Long idUser, Long produtoId, Long quantidade, Principal userLogged) {
+
+        Optional<User> optionalUser = userRepository.findById(idUser);
+
+        if (optionalUser.isPresent()) {
+
+            User user = optionalUser.get();
+
+            if (!user.getEmail().equals(userLogged.getName())) {
+
+                System.out.println("Usuário que solicitou não é o mesmo que esta logado.");
+                throw new BadRequestException("Usuário que solicitou não é o mesmo que esta logado.");
+            }
+
+        }
+
+        Carrinho carrinho = carrinhoRepository.findByUserIdAndProdutoId(idUser, produtoId)
+                .orElseThrow(() -> new BadRequestException(
+                        "Produto Id " + produtoId + " não foi encontrado no seu carrinho"));
+
+        carrinho.setQuantidade(quantidade);
+        carrinho.setQuantia(new BigDecimal(carrinho.getPreco().doubleValue() * carrinho.getQuantidade()));
+        carrinhoRepository.save(carrinho);
+        return carrinho;
+
+    }
+
+    public void delete(Long idUser, Long idProduto, Principal userLogged) {
+
+        Optional<User> optionalUser = userRepository.findById(idUser);
+
+        if (optionalUser.isPresent()) {
+
+            User user = optionalUser.get();
+
+            if (!user.getEmail().equals(userLogged.getName())) {
+
+                System.out.println("Usuário que solicitou não é o mesmo que esta logado.");
+                throw new BadRequestException("Usuário que solicitou não é o mesmo que esta logado.");
+            }
+
+        }
+
+        Optional<Carrinho> optionalCarrinho = carrinhoRepository.findByUserIdAndProdutoId(idUser, idProduto);
+        if (optionalCarrinho.isPresent()) {
+            Carrinho carrinho = optionalCarrinho
+                    .get();
+            carrinhoRepository.delete(carrinho);
+        }
+
+    }
+
+    public void deleteAll(Long idUser, Principal userLogged) {
+
+        Optional<User> optionalUser = userRepository.findById(idUser);
+
+        if (optionalUser.isPresent()) {
+
+            User user = optionalUser.get();
+
+            if (!user.getEmail().equals(userLogged.getName())) {
+
+                System.out.println("Usuário que solicitou não é o mesmo que esta logado.");
+                throw new BadRequestException("Usuário que solicitou não é o mesmo que esta logado.");
+            }
+
+        }
+
+        List<Carrinho> listCarrinho = carrinhoRepository.findAllByUserId(idUser);
+
+        carrinhoRepository.deleteAll(listCarrinho);
+
+    }
+
+    public List<Carrinho> findByUserId(Long id, Principal userLogged) {
+
+        Optional<User> optionalUser = userRepository.findById(id);
+
+        if (optionalUser.isPresent()) {
+
+            User user = optionalUser.get();
+
+            if (user.getEmail().equals(userLogged.getName())) {
+
+                List<Carrinho> listCarrinho = carrinhoRepository.findByUserId(optionalUser.get().getId());
+                return listCarrinho;
+            } else {
+                System.out.println("Usuário que solicitou não é o mesmo que esta logado.");
+                throw new BadRequestException("Usuário que solicitou não é o mesmo que esta logado.");
+            }
+
+        }
+
+        return null;
+    }
+
+    public double calculaValorTotal(Long id) {
+
+        Optional<User> optionalUser = userRepository.findById(id);
+
+        if (optionalUser.isPresent()) {
+            List<Carrinho> listCarrinho = carrinhoRepository.findByUserId(optionalUser.get().getId());
+            double valorTotal = 0.00;
+            for (Carrinho carrinho : listCarrinho) {
+
+                valorTotal = valorTotal + carrinho.getQuantia().doubleValue();
+            }
+            return valorTotal;
+        }
+
+        return 0.00;
+    }
+
+}

@@ -1,0 +1,46 @@
+package com.capellimegahair.api.dto;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import com.capellimegahair.api.entities.Endereco;
+import com.capellimegahair.api.enums.UserRole;
+import com.capellimegahair.api.source.RegistrationSource;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import lombok.Data;
+
+@Data
+public class UserDto {
+
+    private Long id;
+    
+    private String email;
+
+    private String password;
+
+    private String name;
+
+    private UserRole role;
+
+    private String cpf;
+
+    private String socialName;
+
+    private String img;
+
+    private String celular;
+
+    private Boolean isActive;
+
+    @JsonIgnore
+    private RegistrationSource source;
+
+    private Date dataNascimento;
+
+    private String genero;
+
+    private List<Endereco> enderecos = new ArrayList<>();
+    
+}
