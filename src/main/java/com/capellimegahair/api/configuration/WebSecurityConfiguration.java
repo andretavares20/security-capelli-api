@@ -39,10 +39,8 @@ public class WebSecurityConfiguration {
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-
                 return httpSecurity
-                                .csrf(csrf -> csrf
-                                                .disable())
+                                .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(requests -> requests
                                                 .requestMatchers("/api/**").authenticated()
                                                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
@@ -53,49 +51,67 @@ public class WebSecurityConfiguration {
                                 .exceptionHandling(exceptionHandling -> exceptionHandling
                                                 .authenticationEntryPoint((request, response, authException) -> response
                                                                 .sendError(HttpServletResponse.SC_UNAUTHORIZED)))
+                                .headers(headers -> headers
+                                                .contentTypeOptions(contentTypeOptions -> contentTypeOptions.disable())
+                                                .frameOptions(frameOptions -> frameOptions.deny())
+                                                .httpStrictTransportSecurity(hsts -> hsts
+                                                                .includeSubDomains(true)
+                                                                .maxAgeInSeconds(31536000))
+                                                .contentSecurityPolicy(csp -> csp
+                                                                .policyDirectives(
+                                                                                "default-src 'self'; script-src 'self' 'unsafe-inline' https://trustedscripts.example.com;")))
                                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                                 .build();
-
         }
 
         @Bean
         @Profile("dev")
         public WebSecurityCustomizer webSecurityCustomizer() {
                 return (web) -> web.ignoring()
-                                .requestMatchers("/swagger-ui/**", "/v3/**","/actuator/**");
+                                .requestMatchers("/swagger-ui/**", "/v3/**", "/actuator/**"); // Ignora segurança para
+                                                                                              // Swagger e Actuator em
+                                                                                              // desenvolvimento
         }
 
         @Bean
         public PasswordEncoder passwordEncoder() {
-
-                return new BCryptPasswordEncoder();
-
+                return new BCryptPasswordEncoder(); // Encoder de senha BCrypt
         }
 
         @Bean
         public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-
-                return configuration.getAuthenticationManager();
-
+                return configuration.getAuthenticationManager(); // Gerenciador de autenticação padrão
         }
 
         @Bean
         public OpenAPI openAPI() {
-                return new OpenAPI().addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
+                return new OpenAPI()
+                                .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication")) // Requisito
+                                                                                                             // de
+                                                                                                             // segurança
+                                                                                                             // Bearer
                                 .components(new Components().addSecuritySchemes("Bearer Authentication",
-                                                createAPIKeyScheme()))
-                                .info(new Info().title("Api Capelli Megahair")
-                                                .description("Ambiente de testes das API's do Site Capelli Megahair")
-                                                .version("1.0").contact(new Contact().name("André Tavares")
-                                                                .email("www.capellimegahair.com.br")
-                                                                .url("andretavares16@gmail.com"))
-                                                .license(new License().name("License of API")
-                                                                .url("API license URL")));
+                                                createAPIKeyScheme())) // Adiciona esquema de segurança JWT
+                                .info(new Info()
+                                                .title("Api Capelli Megahair") // Título da API
+                                                .description("Ambiente de testes das API's do Site Capelli Megahair") // Descrição
+                                                                                                                      // da
+                                                                                                                      // API
+                                                .version("1.0") // Versão da API
+                                                .contact(new Contact()
+                                                                .name("André Tavares") // Contato
+                                                                .email("andretavares16@gmail.com") // Email
+                                                                .url("https://www.capellimegahair.com.br")) // URL do
+                                                                                                            // site
+                                                .license(new License()
+                                                                .name("License of API") // Nome da licença
+                                                                .url("API license URL"))); // URL da licença
         }
 
         private SecurityScheme createAPIKeyScheme() {
-                return new SecurityScheme().type(SecurityScheme.Type.HTTP)
-                                .bearerFormat("JWT")
-                                .scheme("bearer");
+                return new SecurityScheme()
+                                .type(SecurityScheme.Type.HTTP) // Tipo de esquema HTTP
+                                .bearerFormat("JWT") // Formato do token Bearer
+                                .scheme("bearer"); // Esquema de autenticação Bearer
         }
 }
