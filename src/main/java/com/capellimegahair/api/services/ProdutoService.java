@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.amazonaws.services.internetmonitor.model.InternalServerErrorException;
 import com.capellimegahair.api.dto.ProdutoDto;
 import com.capellimegahair.api.dto.ProdutoTamanhoVolumesDto;
 import com.capellimegahair.api.dto.UploadFileResponse;
@@ -116,14 +117,22 @@ public class ProdutoService {
     }
 
     public Produto createProdutoComTamanhosEVolumes(ProdutoDto produtoDto) {
+
+        Optional<Categoria> optionalCategoria = categoriaRepository.findById(produtoDto.getCategoriaId());
+        if (!optionalCategoria.isPresent()) {
+            throw new InternalServerErrorException("Categoria de id " + produtoDto.getCategoriaId() + "não existe");
+        }
+
         Produto produto = new Produto();
+        produto.setCategoria(optionalCategoria.get());
         BeanUtils.copyProperties(produtoDto, produto);
 
         List<ProdutoTamanho> produtoTamanhos = new ArrayList<>();
 
         for (ProdutoTamanhoVolumesDto tamanhoDto : produtoDto.getProdutoTamanhoVolumesDto()) {
             Tamanho tamanho = tamanhoRepository.findById(tamanhoDto.getTamanhoId())
-                    .orElseThrow(() -> new RuntimeException("Tamanho não encontrado com ID: " + tamanhoDto.getTamanhoId()));
+                    .orElseThrow(
+                            () -> new RuntimeException("Tamanho não encontrado com ID: " + tamanhoDto.getTamanhoId()));
 
             ProdutoTamanho produtoTamanho = new ProdutoTamanho();
             produtoTamanho.setProduto(produto);
