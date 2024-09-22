@@ -18,19 +18,23 @@ import com.capellimegahair.api.dto.CategoriaDto;
 import com.capellimegahair.api.dto.TamanhoDto;
 import com.capellimegahair.api.dto.TecnicaDto;
 import com.capellimegahair.api.entities.Categoria;
+import com.capellimegahair.api.entities.ProdutoTamanho;
 import com.capellimegahair.api.entities.Tamanho;
 import com.capellimegahair.api.entities.Tecnica;
 import com.capellimegahair.api.exceptions.BadRequestException;
 import com.capellimegahair.api.exceptions.NotFoundException;
+import com.capellimegahair.api.repositories.ProdutoTamanhoRepository;
 import com.capellimegahair.api.repositories.TamanhoRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class TamanhoService {
 
-    @Autowired
-    public TamanhoRepository tamanhoRepository;
-    @Autowired
-    public ModelMapper modelMapper;
+    private final TamanhoRepository tamanhoRepository;
+    private final ModelMapper modelMapper;
+    private final ProdutoTamanhoRepository produtoTamanhoRepository;
     
     public Tamanho create(TamanhoDto tamanhoDto) {
         // Verifica se o nome da técnica já existe
@@ -92,6 +96,10 @@ public class TamanhoService {
 
     public void deleteTamanho(Long id) {
         tamanhoRepository.deleteById(id);
+    }
+
+    public List<ProdutoTamanho> findAllProdutoTamanhoByProdutoId(Long produtoId){
+        return produtoTamanhoRepository.findAllByProdutoId(produtoId);
     }
 
 }
