@@ -85,10 +85,16 @@ public class AdminController {
 
     }
 
-    @PostMapping("/create-with-tamanhos-volumes")
+    @PostMapping("/produto/create-with-tamanhos-volumes")
     public ResponseEntity<Produto> createProdutoWithTamanhosVolumes(@RequestBody ProdutoDto produtoDto) {
         Produto produto = produtoService.createProdutoComTamanhosEVolumes(produtoDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(produto);
+    }
+
+    @GetMapping("/produto/{id}")
+    public ResponseEntity<ProdutoDto> getProdutoWithTamanhosVolumes(@PathVariable Long id) {
+        ProdutoDto produtoDto = produtoService.getProdutoComTamanhosEVolumes(id);
+        return ResponseEntity.ok(produtoDto);
     }
 
     @Operation(summary = "Atualiza um produto", description = "Envie para esse endpoint o json contendo todo objeto e o id,mude apenas os dados que queira atualizar.")

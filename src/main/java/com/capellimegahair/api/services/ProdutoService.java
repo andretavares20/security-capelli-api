@@ -160,6 +160,36 @@ public class ProdutoService {
         return produtoRepository.save(produto);
     }
 
+    public ProdutoDto getProdutoComTamanhosEVolumes(Long produtoId) {
+        Produto produto = produtoRepository.findById(produtoId)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado com ID: " + produtoId));
+    
+        ProdutoDto produtoDto = new ProdutoDto();
+        BeanUtils.copyProperties(produto, produtoDto);
+        produtoDto.setCategoriaId(produto.getCategoria().getId());
+    
+        List<ProdutoTamanhoVolumesDto> produtoTamanhoVolumesDtoList = new ArrayList<>();
+        
+        for (ProdutoTamanho produtoTamanho : produto.getProdutoTamanhos()) {
+            ProdutoTamanhoVolumesDto tamanhoDto = new ProdutoTamanhoVolumesDto();
+            tamanhoDto.setTamanhoId(produtoTamanho.getTamanho().getId());
+    
+            List<VolumeDto> volumeDtoList = new ArrayList<>();
+            for (ProdutoVolume produtoVolume : produtoTamanho.getProdutoVolumes()) {
+                VolumeDto volumeDto = new VolumeDto();
+                volumeDto.setId(produtoVolume.getVolume().getId());
+                volumeDto.setPrice(produtoVolume.getPrice());
+                volumeDtoList.add(volumeDto);
+            }
+    
+            tamanhoDto.setVolumes(volumeDtoList);
+            produtoTamanhoVolumesDtoList.add(tamanhoDto);
+        }
+        
+        produtoDto.setProdutoTamanhoVolumesDto(produtoTamanhoVolumesDtoList);
+        return produtoDto;
+    }
+
     public Produto addImagens(Long idProduto, List<MultipartFile> files) throws IOException {
 
         Optional<Produto> optionalProduto = produtoRepository.findById(idProduto);
