@@ -101,6 +101,8 @@ public class User {
         userDto.setIsActive(isActive);
         userDto.setSource(source);
         userDto.setEnderecos(enderecos);
+        userDto.setCpf(cpf);
+        userDto.setSocialName(socialName);
         return userDto;
     }
 
