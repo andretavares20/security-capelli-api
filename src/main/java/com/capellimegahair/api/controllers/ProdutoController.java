@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.capellimegahair.api.dto.ProdutoDto;
 import com.capellimegahair.api.entities.Produto;
-import com.capellimegahair.api.repositories.CorRepository;
 import com.capellimegahair.api.services.ProdutoService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,6 +58,12 @@ public class ProdutoController {
 
         return ResponseEntity.ok().body(produtoService.listaImagensProduto(produtoId));
 
+    }
+
+    @GetMapping("/produto/{id}")
+    public ResponseEntity<ProdutoDto> getProdutoWithTamanhosVolumes(@PathVariable Long id) {
+        ProdutoDto produtoDto = produtoService.getProdutoComTamanhosEVolumes(id);
+        return ResponseEntity.ok(produtoDto);
     }
 
 

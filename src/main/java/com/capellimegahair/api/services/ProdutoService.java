@@ -190,6 +190,59 @@ public class ProdutoService {
         return produtoDto;
     }
 
+    public ProdutoDto putProdutoComTamanhosEVolumes(Long produtoId, ProdutoDto produtoDto) {
+        Produto produto = produtoRepository.findById(produtoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com ID: " + produtoId));
+    
+        // Atualizar os dados do produto
+        BeanUtils.copyProperties(produtoDto, produto, "id");
+        Categoria categoria = categoriaRepository.findById(produtoDto.getCategoriaId())
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada com ID: " + produtoDto.getCategoriaId()));
+        produto.setCategoria(categoria);
+    
+        // Atualizar tamanhos e volumes
+        List<ProdutoTamanho> produtoTamanhos = new ArrayList<>();
+        for (ProdutoTamanhoVolumesDto tamanhoDto : produtoDto.getProdutoTamanhoVolumesDto()) {
+            Tamanho tamanho = tamanhoRepository.findById(tamanhoDto.getTamanhoId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Tamanho não encontrado com ID: " + tamanhoDto.getTamanhoId()));
+    
+            ProdutoTamanho produtoTamanho = produto.getProdutoTamanhos().stream()
+                    .filter(pt -> pt.getTamanho().getId().equals(tamanhoDto.getTamanhoId()))
+                    .findFirst()
+                    .orElse(new ProdutoTamanho());
+    
+            produtoTamanho.setProduto(produto);
+            produtoTamanho.setTamanho(tamanho);
+    
+            List<ProdutoVolume> produtoVolumes = new ArrayList<>();
+            for (VolumeDto volumeDto : tamanhoDto.getVolumes()) {
+                Volume volume = volumeRepository.findById(volumeDto.getId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Volume não encontrado com ID: " + volumeDto.getId()));
+    
+                ProdutoVolume produtoVolume = produtoTamanho.getProdutoVolumes().stream()
+                        .filter(pv -> pv.getVolume().getId().equals(volumeDto.getId()))
+                        .findFirst()
+                        .orElse(new ProdutoVolume());
+    
+                produtoVolume.setProdutoTamanho(produtoTamanho);
+                produtoVolume.setVolume(volume);
+                produtoVolume.setPrice(volumeDto.getPrice());
+                produtoVolumes.add(produtoVolume);
+            }
+    
+            produtoTamanho.setProdutoVolumes(produtoVolumes);
+            produtoTamanhos.add(produtoTamanho);
+        }
+    
+        produto.setProdutoTamanhos(produtoTamanhos);
+    
+        // Salvar o produto atualizado
+        Produto produtoAtualizado = produtoRepository.save(produto);
+    
+        // Converter de volta para DTO
+        return getProdutoComTamanhosEVolumes(produtoAtualizado.getId());
+    }
+
     public Produto addImagens(Long idProduto, List<MultipartFile> files) throws IOException {
 
         Optional<Produto> optionalProduto = produtoRepository.findById(idProduto);

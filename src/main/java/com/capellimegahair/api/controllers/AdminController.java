@@ -105,6 +105,13 @@ public class AdminController {
 
     }
 
+    @PutMapping("/produto/{id}/tamanhos-volumes")
+    public ResponseEntity<ProdutoDto> putProdutoComTamanhosEVolumes(@PathVariable Long id,
+            @RequestBody ProdutoDto produtoDto) {
+        ProdutoDto updatedProdutoDto = produtoService.putProdutoComTamanhosEVolumes(id, produtoDto);
+        return ResponseEntity.ok(updatedProdutoDto);
+    }
+
     @Operation(summary = "Remove um produto", description = "Envie para esse endpoint o id do produto que deseja deletar")
     @DeleteMapping("/produto/{id}")
     public void deleteById(@PathVariable("id") Long id) {
