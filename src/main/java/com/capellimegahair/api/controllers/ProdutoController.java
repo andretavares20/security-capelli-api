@@ -60,7 +60,7 @@ public class ProdutoController {
 
     }
 
-    @GetMapping("/produto/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ProdutoDto> getProdutoWithTamanhosVolumes(@PathVariable Long id) {
         ProdutoDto produtoDto = produtoService.getProdutoComTamanhosEVolumes(id);
         return ResponseEntity.ok(produtoDto);
