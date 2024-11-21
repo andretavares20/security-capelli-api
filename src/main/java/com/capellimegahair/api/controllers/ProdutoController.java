@@ -33,11 +33,11 @@ public class ProdutoController {
         return produtoService.findAll();
     }
 
-    @Operation(summary = "Retorna um produto pelo id", description = "Envie para esse endpoint o id do produto")
-    @GetMapping("/{id}")
-    public Produto findById(@PathVariable("id") Long id) {
-        return produtoService.findById(id);
-    }
+    // @Operation(summary = "Retorna um produto pelo id", description = "Envie para esse endpoint o id do produto")
+    // @GetMapping("/{id}")
+    // public Produto findById(@PathVariable("id") Long id) {
+    //     return produtoService.findById(id);
+    // }
 
     @GetMapping("lista-produtos-por-categoriaId/{categoriaId}")
     public ResponseEntity<List<Produto>> listaProdutosPorCategoriaId(@PathVariable("categoriaId") Long categoriaId){
