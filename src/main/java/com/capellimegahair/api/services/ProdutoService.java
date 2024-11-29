@@ -85,17 +85,13 @@ public class ProdutoService {
             throw new BadRequestException("Produto informado esta sem nome");
         }
 
-        if (produtoDto.getCategoriaId() == null) {
+        if (produtoDto.getCategoria().getId() == null) {
             throw new BadRequestException("Produto informado esta sem categoria");
         }
 
-        if (produtoDto.getCategoriaId() == null) {
-            throw new BadRequestException("Cor informada esta sem id");
-        }
-
-        Categoria categoria = categoriaRepository.findById(produtoDto.getCategoriaId())
+        Categoria categoria = categoriaRepository.findById(produtoDto.getCategoria().getId())
                 .orElseThrow(() -> new BadRequestException(
-                        "Categoria ID " + produtoDto.getCategoriaId() + " não existe"));
+                        "Categoria ID " + produtoDto.getCategoria().getId() + " não existe"));
 
         Produto produto = new Produto(produtoDto.getName(), produtoDto.getDescription(),
                 categoria);
@@ -118,9 +114,9 @@ public class ProdutoService {
 
     public Produto createProdutoComTamanhosEVolumes(ProdutoDto produtoDto) {
 
-        Optional<Categoria> optionalCategoria = categoriaRepository.findById(produtoDto.getCategoriaId());
+        Optional<Categoria> optionalCategoria = categoriaRepository.findById(produtoDto.getCategoria().getId());
         if (!optionalCategoria.isPresent()) {
-            throw new InternalServerErrorException("Categoria de id " + produtoDto.getCategoriaId() + "não existe");
+            throw new InternalServerErrorException("Categoria de id " + produtoDto.getCategoria().getId() + "não existe");
         }
 
         Produto produto = new Produto();
@@ -166,7 +162,7 @@ public class ProdutoService {
     
         ProdutoDto produtoDto = new ProdutoDto();
         BeanUtils.copyProperties(produto, produtoDto);
-        produtoDto.setCategoriaId(produto.getCategoria().getId());
+        produtoDto.setCategoria(produto.getCategoria());
     
         List<ProdutoTamanhoVolumesDto> produtoTamanhoVolumesDtoList = new ArrayList<>();
         
@@ -196,8 +192,8 @@ public class ProdutoService {
     
         // Atualizar os dados do produto
         BeanUtils.copyProperties(produtoDto, produto, "id");
-        Categoria categoria = categoriaRepository.findById(produtoDto.getCategoriaId())
-                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada com ID: " + produtoDto.getCategoriaId()));
+        Categoria categoria = categoriaRepository.findById(produtoDto.getCategoria().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada com ID: " + produtoDto.getCategoria().getId()));
         produto.setCategoria(categoria);
     
         // Atualizar tamanhos e volumes
