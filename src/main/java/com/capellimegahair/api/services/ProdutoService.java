@@ -174,6 +174,8 @@ public class ProdutoService {
             for (ProdutoVolume produtoVolume : produtoTamanho.getProdutoVolumes()) {
                 VolumeDto volumeDto = new VolumeDto();
                 volumeDto.setId(produtoVolume.getVolume().getId());
+                volumeDto.setGramas(produtoVolume.getVolume().getGramas());
+                volumeDto.setSituacao(produtoVolume.getVolume().getSituacao());
                 volumeDto.setPrice(produtoVolume.getPrice());
                 volumeDtoList.add(volumeDto);
             }
